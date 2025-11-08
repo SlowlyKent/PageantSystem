@@ -1,0 +1,282 @@
+/* =============================================
+   PAGEANT SYSTEM - DASHBOARD STYLES
+   ============================================= */
+
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Navbar Styles */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    min-height: 100vh;
+    /* Background color now controlled by dynamic theme CSS */
+    box-shadow: 2px 0 10px rgba(0,0,0,.15);
+    padding: 0;
+    position: fixed;
+    top: 0; /* Sidebar starts from top (no header) */
+    left: 0;
+    width: 250px;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.sidebar-header {
+    padding: 30px 20px;
+    text-align: center;
+    color: white;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.sidebar-header .crown-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.sidebar-header h4 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.sidebar-header p {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.sidebar .nav-link {
+    color: rgba(255,255,255,0.9);
+    padding: 15px 25px;
+    border-left: 3px solid transparent;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255,255,255,0.15);
+    border-left-color: white;
+    color: white;
+}
+
+.sidebar .nav-link.active {
+    background-color: rgba(255,255,255,0.25);
+    border-left-color: white;
+    color: white;
+    font-weight: 600;
+}
+
+.sidebar .nav-link i {
+    width: 25px;
+    margin-right: 12px;
+    font-size: 1.1rem;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+
+/* Table Styles */
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+/* Main Content Area */
+main {
+    padding-top: 20px; /* No header, just spacing */
+    margin-left: 250px;
+}
+
+/* Sidebar Column */
+.col-md-3.col-lg-2 {
+    flex: 0 0 250px;
+    max-width: 250px;
+}
+
+/* Dashboard Stats Cards */
+.stats-card {
+    border-radius: 10px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s;
+}
+
+.stats-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    transform: translateY(-3px);
+}
+
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stats-icon.beige {
+    background: linear-gradient(135deg, #c4a574 0%, #a89060 100%);
+}
+
+.stats-icon.green {
+    background: linear-gradient(135deg, #28a745 0%, #20863a 100%);
+}
+
+.stats-icon.orange {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+.stats-icon.blue {
+    background: linear-gradient(135deg, #5b7cd6 0%, #4a65b0 100%);
+}
+
+.stats-content h3 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.stats-content p {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin: 0;
+}
+
+/* Dashboard Page Header */
+.page-header {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.page-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+}
+
+.page-header p {
+    color: #6c757d;
+    margin: 5px 0 0 0;
+    font-size: 0.95rem;
+}
+
+/* Section Cards */
+.section-card {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.section-card h5 {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.badge-active {
+    background: #28a745;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.round-info {
+    text-align: center;
+    padding: 20px;
+}
+
+.round-info h6 {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+}
+
+.round-info h4 {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.round-info p {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+    }
+    
+    .stats-card {
+        margin-bottom: 15px;
+    }
+}
