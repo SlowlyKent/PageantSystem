@@ -6,7 +6,6 @@ use CodeIgniter\Database\Migration;
 
 /**
  * Scores Table
- * Stores individual scores from judges for each contestant per criteria
  */
 class CreateScoresTable extends Migration
 {
@@ -23,37 +22,36 @@ class CreateScoresTable extends Migration
                 'type'       => 'INT',
                 'constraint' => 11,
                 'unsigned'   => true,
-                'comment'    => 'User ID of the judge',
+                'null'       => false,
             ],
             'contestant_id' => [
                 'type'       => 'INT',
                 'constraint' => 11,
                 'unsigned'   => true,
+                'null'       => false,
             ],
             'round_id' => [
                 'type'       => 'INT',
                 'constraint' => 11,
                 'unsigned'   => true,
+                'null'       => false,
             ],
-            'segment_id' => [
+            'round_criteria_id' => [
                 'type'       => 'INT',
                 'constraint' => 11,
                 'unsigned'   => true,
-            ],
-            'criteria_id' => [
-                'type'       => 'INT',
-                'constraint' => 11,
-                'unsigned'   => true,
+                'null'       => true,
+                'comment'    => 'Linked criterion for this round',
             ],
             'score' => [
                 'type'       => 'DECIMAL',
                 'constraint' => '5,2',
-                'comment'    => 'Score given by judge (e.g., 85.50)',
+                'default'    => 0.00,
+                'null'       => false,
             ],
             'remarks' => [
                 'type' => 'TEXT',
                 'null' => true,
-                'comment' => 'Optional judge remarks/comments',
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -69,12 +67,6 @@ class CreateScoresTable extends Migration
         $this->forge->addForeignKey('judge_id', 'users', 'id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('contestant_id', 'contestants', 'id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('round_id', 'rounds', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('segment_id', 'round_segments', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addForeignKey('criteria_id', 'criteria', 'id', 'CASCADE', 'CASCADE');
-        
-        // Unique constraint: one score per judge per contestant per criteria
-        $this->forge->addUniqueKey(['judge_id', 'contestant_id', 'criteria_id']);
-        
         $this->forge->createTable('scores');
     }
 

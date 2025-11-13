@@ -21,53 +21,125 @@ class ThemeController extends BaseController
         
         // Get theme colors from database
         $primaryColor = $settingsModel->getSetting('primary_color') ?: '#667eea';
-        $accentColor = $settingsModel->getSetting('accent_color') ?: '#764ba2';
-        $textColor = $settingsModel->getSetting('text_color') ?: '#333333';
+        $accentColor  = $settingsModel->getSetting('accent_color') ?: '#764ba2';
+        $textColor    = $settingsModel->getSetting('text_color') ?: '#333333';
+        $buttonColor  = $settingsModel->getSetting('button_color') ?: $primaryColor;
         
         // Calculate lighter and darker shades
         $primaryLight = $this->adjustBrightness($primaryColor, 20);
-        $primaryDark = $this->adjustBrightness($primaryColor, -20);
-        $accentLight = $this->adjustBrightness($accentColor, 20);
-        $accentDark = $this->adjustBrightness($accentColor, -20);
+        $primaryDark  = $this->adjustBrightness($primaryColor, -20);
+        $accentLight  = $this->adjustBrightness($accentColor, 20);
+        $accentDark   = $this->adjustBrightness($accentColor, -20);
+        $buttonLight  = $this->adjustBrightness($buttonColor, 20);
+        $buttonDark   = $this->adjustBrightness($buttonColor, -20);
+
+        // Determine contrast text colors
+        $primaryContrast = $this->calculateContrastColor($primaryColor);
+        $accentContrast  = $this->calculateContrastColor($accentColor);
+        $buttonContrast  = $this->calculateContrastColor($buttonColor);
         
+        // Background: make the app background plain white (only sidebar is themed)
+        $bgCss = "body { background: #ffffff !important; }";
+
         // Generate CSS
         $css = "
 /* ========================================
    DYNAMIC THEME CSS - Auto-generated
    Primary Color: {$primaryColor}
    Accent Color: {$accentColor}
+   Text Color: {$textColor}
    ======================================== */
 
-/* PRIMARY BUTTONS */
+{$bgCss}
+
+/* BASE TEXT COLOR */
+:root {
+    --theme-text-color: {$textColor};
+    --theme-primary-color: {$primaryColor};
+    --theme-primary-rgb: {$this->hexToRgb($primaryColor)};
+    --theme-primary-light: {$primaryLight};
+    --theme-primary-dark: {$primaryDark};
+    --theme-primary-contrast: {$primaryContrast};
+    --theme-accent-color: {$accentColor};
+    --theme-accent-rgb: {$this->hexToRgb($accentColor)};
+    --theme-accent-light: {$accentLight};
+    --theme-accent-dark: {$accentDark};
+    --theme-accent-contrast: {$accentContrast};
+    --theme-button-color: {$buttonColor};
+    --theme-button-rgb: {$this->hexToRgb($buttonColor)};
+    --theme-button-light: {$buttonLight};
+    --theme-button-dark: {$buttonDark};
+    --theme-button-contrast: {$buttonContrast};
+    --theme-gradient-135: linear-gradient(135deg, {$primaryColor} 0%, {$accentColor} 100%);
+    --theme-gradient-90: linear-gradient(90deg, {$primaryColor} 0%, {$accentColor} 100%);
+}
+body, main, .text-body { color: var(--theme-text-color) !important; }
+.section-card p, .card p, .table, .form-label, .nav-link { color: var(--theme-text-color) !important; }
+.text-theme { color: var(--theme-text-color) !important; }
+
+/* KEEP BLACK TEXT FOR VISIBILITY */
+.stats-content h3,
+.stats-content p,
+.section-card h5,
+.section-card h4,
+.section-card strong,
+.list-group-item strong,
+.contestant-name {
+    color: #333 !important;
+}
+
+.badge.bg-primary,
+.badge.bg-warning,
+.badge.bg-secondary,
+.badge.bg-success {
+    color: #fff !important;
+}
+
+/* PRIMARY BUTTONS (configurable) */
 .btn-primary {
-    background: {$primaryColor} !important;
-    border-color: {$primaryColor} !important;
-    color: #ffffff !important;
+    background: var(--theme-button-color) !important;
+    border-color: var(--theme-button-color) !important;
+    color: var(--theme-button-contrast, #ffffff) !important;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-    background: {$primaryDark} !important;
-    border-color: {$primaryDark} !important;
-    box-shadow: 0 4px 12px rgba({$this->hexToRgb($primaryColor)}, 0.4) !important;
+    background: {$buttonDark} !important;
+    border-color: {$buttonDark} !important;
+    box-shadow: 0 4px 12px rgba({$this->hexToRgb($buttonColor)}, 0.4) !important;
 }
 
 .btn-primary:active {
-    background: {$primaryDark} !important;
-    border-color: {$primaryDark} !important;
+    background: {$buttonDark} !important;
+    border-color: {$buttonDark} !important;
 }
 
 /* SECONDARY/ACCENT BUTTONS */
 .btn-info {
     background: {$accentColor} !important;
     border-color: {$accentColor} !important;
-    color: #ffffff !important;
+    color: {$accentContrast} !important;
 }
 
 .btn-info:hover,
 .btn-info:focus {
     background: {$accentDark} !important;
     border-color: {$accentDark} !important;
+}
+
+/* THEME OUTLINE SECONDARY (e.g., Back to List) */
+.btn-secondary,
+.btn-outline-secondary {
+    background: transparent !important;
+    color: var(--theme-button-color) !important;
+    border-color: var(--theme-button-color) !important;
+}
+
+.btn-secondary:hover, .btn-secondary:focus,
+.btn-outline-secondary:hover, .btn-outline-secondary:focus {
+    background: {$buttonColor} !important;
+    color: var(--theme-button-contrast, #ffffff) !important;
+    border-color: {$buttonColor} !important;
 }
 
 /* OUTLINE BUTTONS WITH PRIMARY COLOR */
@@ -86,14 +158,14 @@ class ThemeController extends BaseController
 .table thead th,
 .table-light th,
 .card-header {
-    background: {$primaryColor} !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, {$primaryLight} 0%, {$primaryColor} 100%) !important;
+    color: {$primaryContrast} !important;
     border-color: {$primaryDark} !important;
 }
 
 .table th {
-    background: {$primaryColor} !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, {$primaryLight} 0%, {$primaryColor} 100%) !important;
+    color: {$primaryContrast} !important;
 }
 
 /* ALTERNATIVE TABLE HEADER STYLES */
@@ -108,21 +180,23 @@ class ThemeController extends BaseController
 /* BADGES WITH PRIMARY COLOR */
 .badge.bg-primary {
     background: {$primaryColor} !important;
+    color: {$primaryContrast} !important;
 }
 
 .badge.bg-info {
     background: {$accentColor} !important;
+    color: {$accentContrast} !important;
 }
 
 /* CARD HEADERS */
 .card-header.bg-primary {
     background: {$primaryColor} !important;
-    color: #ffffff !important;
+    color: {$primaryContrast} !important;
 }
 
 .card-header.bg-info {
     background: {$accentColor} !important;
-    color: #ffffff !important;
+    color: {$accentContrast} !important;
 }
 
 /* SIDEBAR - Main Background */
@@ -259,6 +333,26 @@ a:hover {
     background: linear-gradient(135deg, {$primaryColor} 0%, {$accentColor} 100%) !important;
 }
 
+/* SECTION CARDS (apply theme to headings and dividers) */
+.section-card > h5 { color: {$primaryColor} !important; }
+.section-card > hr { border-top: 2px solid {$primaryColor} !important; opacity: 1 !important; }
+
+/* RESULTS PAGE - Overall card (uses theme gradient) */
+.overall-card {
+    background: linear-gradient(135deg, {$primaryColor} 0%, {$accentColor} 100%) !important;
+    color: #ffffff !important;
+}
+
+/* RESULTS PAGE - Round cards left border uses primary */
+.result-card {
+    border-left-color: {$primaryColor} !important;
+}
+
+/* Hover shadow tint */
+.result-card:hover {
+    box-shadow: 0 10px 24px rgba({$this->hexToRgb($primaryColor)}, 0.25) !important;
+}
+
 /* ROUND CARDS */
 .round-card {
     border-left: 4px solid {$primaryColor} !important;
@@ -342,5 +436,20 @@ a:hover {
         $b = hexdec(substr($hex, 4, 2));
         
         return "$r, $g, $b";
+    }
+
+    /**
+     * Determine contrasting text color (black/white) for a given background color
+     */
+    private function calculateContrastColor($hex)
+    {
+        $hex = str_replace('#', '', $hex);
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        $brightness = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+        return ($brightness > 160) ? '#111111' : '#ffffff';
     }
 }

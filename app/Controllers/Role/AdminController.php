@@ -41,12 +41,63 @@ class AdminController extends BaseController
         $totalRounds = $roundModel->countAllResults();
         $scoresSubmitted = $scoreModel->countAllResults();
         
+        // Determine current round (prefer latest active, else latest completed)
+        $currentRound = $roundModel->where('status', 'active')->orderBy('id', 'DESC')->first();
+        if (!$currentRound) {
+            $currentRound = $roundModel->where('status', 'completed')->orderBy('id', 'DESC')->first();
+        }
+
+        // Build small leaderboard (top 5)
+        $dashboardLeaderboard = [];
+        $judgeCompletion = ['total' => 0, 'completed' => 0, 'percentage' => 0];
+        if (!empty($currentRound)) {
+            $rankings = $scoreModel->getRoundRankings($currentRound['id']);
+            $dashboardLeaderboard = array_map(function($row) {
+                return [
+                    'rank' => $row['rank'],
+                    'name' => $row['contestant_name']
+                ];
+            }, array_slice($rankings, 0, 5));
+
+            // Get all active judges with their completion status for current round
+            $db = \Config\Database::connect();
+            $judges_list = $db->table('users')
+                ->select('users.id, users.full_name, round_judges.completed_at')
+                ->join('roles', 'roles.id = users.role_id')
+                ->join('round_judges', 'round_judges.judge_id = users.id AND round_judges.round_id = ' . $currentRound['id'], 'left')
+                ->where('roles.name', 'judge')
+                ->where('users.status', 'active')
+                ->orderBy('users.full_name', 'ASC')
+                ->get()
+                ->getResultArray();
+            
+            // Calculate judge completion from judges_list
+            $totalJudges = count($judges_list);
+            $completedJudges = 0;
+            foreach ($judges_list as $judge) {
+                if (!empty($judge['completed_at'])) {
+                    $completedJudges++;
+                }
+            }
+            $judgeCompletion = [
+                'total' => $totalJudges,
+                'completed' => $completedJudges,
+                'percentage' => $totalJudges > 0 ? round(($completedJudges / $totalJudges) * 100, 2) : 0
+            ];
+        } else {
+            $judges_list = [];
+        }
+
         $data = [
             'title' => 'Dashboard',
             'total_contestants' => $totalContestants,
             'active_judges' => $activeJudges,
             'total_rounds' => $totalRounds,
             'scores_submitted' => $scoresSubmitted,
+            'current_round' => $currentRound,
+            'dashboard_leaderboard' => $dashboardLeaderboard,
+            'judge_completion' => $judgeCompletion,
+            'judges_list' => $judges_list,
         ];
 
         return view('admin/dashboard', $data);

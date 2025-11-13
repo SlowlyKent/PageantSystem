@@ -36,21 +36,24 @@
             <?= csrf_field() ?>
             
             <div class="row">
-                <!-- Username -->
-                <div class="col-md-6 mb-3">
-                    <label for="username" class="form-label">
-                        <i class="bi bi-person-circle"></i> Username <span class="text-danger">*</span>
+                <!-- Full Name -->
+                <div class="col-12 mb-3">
+                    <label for="full_name" class="form-label">
+                        <i class="bi bi-person-fill"></i> Full Name <span class="text-danger">*</span>
                     </label>
                     <input 
                         type="text" 
                         class="form-control" 
-                        id="username" 
-                        name="username" 
-                        value="<?= old('username', $judge['username']) ?>"
+                        id="full_name" 
+                        name="full_name" 
+                        value="<?= old('full_name', $judge['full_name']) ?>"
                         required
+                        placeholder="Enter full name"
                     >
                 </div>
-                
+            </div>
+            
+            <div class="row">
                 <!-- Email -->
                 <div class="col-md-6 mb-3">
                     <label for="email" class="form-label">
@@ -63,30 +66,15 @@
                         name="email" 
                         value="<?= old('email', $judge['email']) ?>"
                         required
-                    >
-                </div>
-            </div>
-            
-            <div class="row">
-                <!-- Full Name -->
-                <div class="col-md-6 mb-3">
-                    <label for="full_name" class="form-label">
-                        <i class="bi bi-person-fill"></i> Full Name <span class="text-danger">*</span>
-                    </label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        id="full_name" 
-                        name="full_name" 
-                        value="<?= old('full_name', $judge['full_name']) ?>"
-                        required
+                        placeholder="Enter Email Address"
+                        autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="email"
                     >
                 </div>
                 
-                <!-- Password (Optional) -->
+                <!-- New Password (Optional) -->
                 <div class="col-md-6 mb-3">
                     <label for="password" class="form-label">
-                        <i class="bi bi-lock-fill"></i> New Password (Optional)
+                        <i class="bi bi-lock-fill"></i> Password (Optional)
                     </label>
                     <div class="input-group">
                         <input 
@@ -95,17 +83,18 @@
                             id="password" 
                             name="password" 
                             minlength="6"
-                            placeholder="Leave blank to keep current password"
+                            placeholder="Enter password"
+                            autocomplete="new-password"
                         >
                         <button 
                             class="btn btn-outline-secondary" 
                             type="button" 
                             onclick="togglePassword()"
+                            title="Show/Hide Password"
                         >
                             <i class="bi bi-eye-fill" id="toggleIcon"></i>
                         </button>
                     </div>
-                    <small class="text-muted">Only fill this if you want to change the password.</small>
                 </div>
             </div>
             
@@ -123,16 +112,54 @@
                     </option>
                 </select>
             </div>
-            
-            <!-- Account Info -->
-            <div class="alert alert-info mb-4">
-                <i class="bi bi-info-circle-fill"></i> <strong>Account Created:</strong> 
-                <?= date('F d, Y h:i A', strtotime($judge['created_at'])) ?>
-                <?php if ($judge['updated_at']): ?>
-                    <br><i class="bi bi-clock-fill"></i> <strong>Last Updated:</strong> 
-                    <?= date('F d, Y h:i A', strtotime($judge['updated_at'])) ?>
-                <?php endif; ?>
+
+            <hr class="my-4">
+
+            <h5 class="fw-bold mb-3"><i class="bi bi-award-fill"></i> Judge Introduction Profile</h5>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="judge_title" class="form-label">
+                        <i class="bi bi-briefcase-fill"></i> Professional Title / Expertise
+                    </label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="judge_title"
+                        name="judge_title"
+                        value="<?= old('judge_title', $judge['judge_title'] ?? '') ?>"
+                        placeholder="e.g., International Fashion Designer"
+                    >
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="judge_organization" class="form-label">
+                        <i class="bi bi-building"></i> Organization / Affiliation
+                    </label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="judge_organization"
+                        name="judge_organization"
+                        value="<?= old('judge_organization', $judge['judge_organization'] ?? '') ?>"
+                        placeholder="e.g., Founder, Inspire Creative Studios"
+                    >
+                </div>
             </div>
+
+            <div class="mb-3">
+                <label for="judge_achievements" class="form-label">
+                    <i class="bi bi-trophy-fill"></i> Notable Achievements & Awards
+                </label>
+                <textarea class="form-control" id="judge_achievements" name="judge_achievements" rows="3" placeholder="Highlight recognitions, awards, publications, or milestones. Use sentences or bullet-style phrases."><?= old('judge_achievements', $judge['judge_achievements'] ?? '') ?></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="judge_biography" class="form-label">
+                    <i class="bi bi-journal-text"></i> Brief Biography
+                </label>
+                <textarea class="form-control" id="judge_biography" name="judge_biography" rows="3" placeholder="Share the judge's background, advocacies, and passions."><?= old('judge_biography', $judge['judge_biography'] ?? '') ?></textarea>
+            </div>
+
             
             <!-- Submit Buttons -->
             <div class="d-flex gap-2">

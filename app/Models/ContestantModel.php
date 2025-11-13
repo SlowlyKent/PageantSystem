@@ -88,6 +88,48 @@ class ContestantModel extends Model
     }
 
     /**
+     * Get contestants assigned to a specific round (excluding eliminated)
+     */
+    public function getContestantsForRound(int $roundId): array
+    {
+        $db = \Config\Database::connect();
+
+        $contestants = $db->table('round_contestants')
+            ->select('contestants.*, 
+                contestant_details.age,
+                contestant_details.height,
+                contestant_details.weight,
+                contestant_details.advocacy,
+                contestant_details.talent,
+                contestant_details.hobbies,
+                contestant_details.education,
+                contestant_contacts.address,
+                contestant_contacts.city,
+                contestant_contacts.province,
+                contestant_contacts.contact_number,
+                contestant_contacts.email,
+                round_contestants.state')
+            ->join('contestants', 'contestants.id = round_contestants.contestant_id')
+            ->join('contestant_details', 'contestant_details.contestant_id = contestants.id', 'left')
+            ->join('contestant_contacts', 'contestant_contacts.contestant_id = contestants.id', 'left')
+            ->where('round_contestants.round_id', $roundId)
+            ->where('round_contestants.state !=', 'eliminated')
+            ->orderBy('contestants.contestant_number', 'ASC')
+            ->get()
+            ->getResultArray();
+
+        foreach ($contestants as &$contestant) {
+            if (!empty($contestant['profile_picture'])) {
+                $contestant['photo_url'] = base_url('uploads/contestants/' . $contestant['profile_picture']);
+            } else {
+                $contestant['photo_url'] = null;
+            }
+        }
+
+        return $contestants;
+    }
+
+    /**
      * Get all contestants with their details
      */
     public function getAllWithDetails()
@@ -100,6 +142,42 @@ class ContestantModel extends Model
             ->join('contestant_contacts', 'contestant_contacts.contestant_id = contestants.id', 'left')
             ->orderBy('contestants.contestant_number', 'ASC')
             ->findAll();
+    }
+
+    /**
+     * Get all active contestants with complete details for judges
+     */
+    public function getContestantsWithDetails()
+    {
+        $contestants = $this->select('contestants.*, 
+                             contestant_details.age,
+                             contestant_details.height,
+                             contestant_details.weight,
+                             contestant_details.advocacy,
+                             contestant_details.talent,
+                             contestant_details.hobbies,
+                             contestant_details.education,
+                             contestant_contacts.address,
+                             contestant_contacts.city,
+                             contestant_contacts.province,
+                             contestant_contacts.contact_number,
+                             contestant_contacts.email')
+            ->join('contestant_details', 'contestant_details.contestant_id = contestants.id', 'left')
+            ->join('contestant_contacts', 'contestant_contacts.contestant_id = contestants.id', 'left')
+            ->where('contestants.status', 'active')
+            ->orderBy('contestants.contestant_number', 'ASC')
+            ->findAll();
+        
+        // Add photo URL for each contestant
+        foreach ($contestants as &$contestant) {
+            if (!empty($contestant['profile_picture'])) {
+                $contestant['photo_url'] = base_url('uploads/contestants/' . $contestant['profile_picture']);
+            } else {
+                $contestant['photo_url'] = null;
+            }
+        }
+        
+        return $contestants;
     }
 
     /**
@@ -123,14 +201,21 @@ class ContestantModel extends Model
         $lastContestant = $this->orderBy('id', 'DESC')->first();
         
         if (!$lastContestant) {
-            return 'C001';
+            return '1';
         }
         
-        // Extract number from last contestant number
-        $lastNumber = (int) substr($lastContestant['contestant_number'], 1);
+        // Extract number from last contestant number (handle both old 'C001' and new '1' format)
+        $lastNumberStr = $lastContestant['contestant_number'];
+        if (strpos($lastNumberStr, 'C') === 0) {
+            // Old format: C001
+            $lastNumber = (int) substr($lastNumberStr, 1);
+        } else {
+            // New format: 1, 2, 3
+            $lastNumber = (int) $lastNumberStr;
+        }
         $newNumber = $lastNumber + 1;
         
-        return 'C' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        return (string) $newNumber;
     }
 
     /**

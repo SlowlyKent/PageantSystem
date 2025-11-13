@@ -50,37 +50,36 @@
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
-<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+<div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1 class="h2">
+        <h1 class="h3 mb-1">
             <span class="badge bg-primary me-2">Round <?= $round['round_number'] ?></span>
             <?= esc($round['round_name']) ?>
         </h1>
-        <p class="text-muted">Round details, segments, and judging criteria</p>
+        <p class="text-muted mb-0 small">Round details and judging criteria</p>
     </div>
-    <a href="<?= base_url('admin/rounds-criteria') ?>" class="btn btn-secondary">
+    <a href="<?= base_url('admin/rounds-criteria') ?>" class="btn btn-outline-secondary">
         <i class="bi bi-arrow-left"></i> Back to List
     </a>
 </div>
 
 <!-- Round Info Card -->
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0"><i class="bi bi-info-circle-fill"></i> Round Information</h5>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-3">
-                <strong>Round Number:</strong>
-                <p><?= $round['round_number'] ?></p>
-            </div>
-            <div class="col-md-6">
-                <strong>Round Name:</strong>
-                <p><?= esc($round['round_name']) ?></p>
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <h6 class="text-uppercase text-muted mb-4" style="font-weight: 600; letter-spacing: 0.5px; font-size: 0.75rem;">Round Information</h6>
+        
+        <div class="row g-4">
+            <div class="col-md-2">
+                <div class="text-muted small mb-2">Round Number</div>
+                <div class="fw-bold fs-5"><?= $round['round_number'] ?></div>
             </div>
             <div class="col-md-3">
-                <strong>Status:</strong>
-                <p>
+                <div class="text-muted small mb-2">Round Name</div>
+                <div class="fw-bold"><?= esc($round['round_name']) ?></div>
+            </div>
+            <div class="col-md-2">
+                <div class="text-muted small mb-2">Status</div>
+                <div>
                     <?php
                     $statusClass = match($round['status']) {
                         'active' => 'success',
@@ -92,165 +91,99 @@
                     <span class="badge bg-<?= $statusClass ?>">
                         <?= ucfirst($round['status']) ?>
                     </span>
-                </p>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="text-muted small mb-2">Criteria</div>
+                <div>
+                    <span class="badge bg-primary"><?= isset($round['criteria']) ? count($round['criteria']) : 0 ?> Item<?= (isset($round['criteria']) ? count($round['criteria']) : 0) === 1 ? '' : 's' ?></span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="text-muted small mb-2">Max Score</div>
+                <div class="fw-bold fs-5"><?= isset($round['max_score']) ? number_format($round['max_score'], 2) : '100.00' ?></div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small mb-2">Created</div>
+                <div class="small"><?= date('M d, Y h:i A', strtotime($round['created_at'])) ?></div>
             </div>
         </div>
         
         <?php if (!empty($round['description'])): ?>
-            <div class="row">
+            <div class="row mt-4">
                 <div class="col-12">
-                    <strong>Description:</strong>
-                    <p><?= nl2br(esc($round['description'])) ?></p>
+                    <div class="text-muted small mb-2">Description</div>
+                    <div class="text-secondary"><?= nl2br(esc($round['description'])) ?></div>
                 </div>
             </div>
         <?php endif; ?>
-        
-        <div class="row">
-            <div class="col-md-6">
-                <strong>Number of Segments:</strong>
-                <p>
-                    <?php if ($round['segment_count'] == 1): ?>
-                        <span class="badge bg-primary">1 Segment</span>
-                    <?php else: ?>
-                        <span class="badge bg-info">2 Segments</span>
-                    <?php endif; ?>
-                </p>
-            </div>
-            <div class="col-md-6">
-                <strong>Created:</strong>
-                <p><?= date('F d, Y h:i A', strtotime($round['created_at'])) ?></p>
-            </div>
-        </div>
     </div>
 </div>
 
-<!-- Segments -->
-<?php if (!empty($round['segments'])): ?>
-    <?php foreach ($round['segments'] as $segment): ?>
-        <div class="segment-card">
-            <div class="segment-header-<?= $segment['segment_number'] ?>">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">
-                        <i class="bi bi-<?= $segment['segment_number'] ?>-circle-fill"></i>
-                        Segment <?= $segment['segment_number'] ?>: <?= esc($segment['segment_name']) ?>
-                    </h4>
-                    <span class="badge bg-light text-dark fs-6">
-                        Weight: <?= number_format($segment['weight_percentage'], 0) ?>%
-                    </span>
-                </div>
-                <?php if (!empty($segment['description'])): ?>
-                    <p class="mb-0 mt-2 opacity-75"><?= esc($segment['description']) ?></p>
-                <?php endif; ?>
-            </div>
-            
-            <div class="card-body">
-                <h6 class="mb-3">
-                    <i class="bi bi-list-check"></i> Judging Criteria
-                    <span class="badge bg-success ms-2">
-                        <?= count($segment['criteria']) ?> criteria
-                    </span>
-                </h6>
-                
-                <?php if (!empty($segment['criteria'])): ?>
-                    <div class="table-responsive">
-                        <table class="table criteria-table table-hover">
-                            <thead>
-                                <tr>
-                                    <th width="5%">#</th>
-                                    <th width="25%">Criteria Name</th>
-                                    <th width="35%">Description</th>
-                                    <th width="10%" class="text-center">Max Score</th>
-                                    <th width="15%">Percentage</th>
-                                    <th width="10%" class="text-center">Weight</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($segment['criteria'] as $index => $criteria): ?>
-                                    <tr>
-                                        <td><?= $index + 1 ?></td>
-                                        <td>
-                                            <strong><?= esc($criteria['criteria_name']) ?></strong>
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">
-                                                <?= !empty($criteria['description']) ? esc($criteria['description']) : '<em>No description</em>' ?>
-                                            </small>
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="badge bg-info"><?= $criteria['max_score'] ?></span>
-                                        </td>
-                                        <td>
-                                            <div class="percentage-bar mb-1">
-                                                <div class="percentage-fill" style="width: <?= $criteria['percentage'] ?>%"></div>
-                                            </div>
-                                            <small><?= number_format($criteria['percentage'], 2) ?>%</small>
-                                        </td>
-                                        <td class="text-center">
-                                            <span class="badge bg-primary">
-                                                <?= number_format(($criteria['percentage'] * $segment['weight_percentage']) / 100, 2) ?>%
-                                            </span>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                            <tfoot>
-                                <tr class="table-light">
-                                    <td colspan="4" class="text-end"><strong>Total:</strong></td>
-                                    <td colspan="2">
-                                        <?php
-                                        $totalPercentage = array_sum(array_column($segment['criteria'], 'percentage'));
-                                        $badgeClass = abs($totalPercentage - 100) < 0.01 ? 'success' : 'danger';
-                                        ?>
-                                        <span class="badge bg-<?= $badgeClass ?> fs-6">
-                                            <?= number_format($totalPercentage, 2) ?>%
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                <?php else: ?>
-                    <div class="alert alert-warning">
-                        <i class="bi bi-exclamation-triangle"></i> No criteria defined for this segment.
-                    </div>
-                <?php endif; ?>
-            </div>
+<!-- Criteria -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>Judging Criteria</h5>
+            <span class="badge bg-secondary"><?= isset($round['criteria']) ? count($round['criteria']) : 0 ?> item<?= (isset($round['criteria']) ? count($round['criteria']) : 0) === 1 ? '' : 's' ?></span>
         </div>
-    <?php endforeach; ?>
-<?php else: ?>
-    <div class="alert alert-warning">
-        <i class="bi bi-exclamation-triangle"></i> No segments found for this round.
-    </div>
-<?php endif; ?>
 
-<!-- Summary Card -->
-<div class="card shadow-sm">
-    <div class="card-header bg-success text-white">
-        <h5 class="mb-0"><i class="bi bi-check2-circle"></i> Summary</h5>
-    </div>
-    <div class="card-body">
-        <div class="row text-center">
-            <div class="col-md-4">
-                <h3 class="text-primary"><?= count($round['segments']) ?></h3>
-                <p class="text-muted">Segments</p>
+        <?php if (!empty($round['criteria'])): ?>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" style="border: 1px solid #dee2e6;">
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="30%">Criteria Name</th>
+                            <th width="40%">Description</th>
+                            <th width="10%" class="text-center">% Weight</th>
+                            <th width="10%" class="text-center">Max Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($round['criteria'] as $index => $criteria): ?>
+                            <tr>
+                                <td><?= $index + 1 ?></td>
+                                <td><strong><?= esc($criteria['criteria_name']) ?></strong></td>
+                                <td class="text-muted small">
+                                    <?= !empty($criteria['description']) ? esc($criteria['description']) : '<em>No description</em>' ?>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary"><?= number_format($criteria['percentage'], 2) ?>%</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-success"><?= number_format($criteria['max_score'], 2) ?></span>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light">
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td class="text-center">
+                                <?php
+                                $totalPercentage = array_sum(array_column($round['criteria'], 'percentage'));
+                                $badgeClass = abs($totalPercentage - 100) < 0.01 ? 'success' : 'danger';
+                                ?>
+                                <span class="badge bg-<?= $badgeClass ?> fs-6">
+                                    <?= number_format($totalPercentage, 2) ?>%
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <?php $totalMaxScore = array_sum(array_column($round['criteria'], 'max_score')); ?>
+                                <span class="badge bg-success fs-6">
+                                    <?= number_format($totalMaxScore, 2) ?>
+                                </span>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
-            <div class="col-md-4">
-                <h3 class="text-success">
-                    <?php
-                    $totalCriteria = 0;
-                    foreach ($round['segments'] as $seg) {
-                        $totalCriteria += count($seg['criteria']);
-                    }
-                    echo $totalCriteria;
-                    ?>
-                </h3>
-                <p class="text-muted">Total Criteria</p>
+        <?php else: ?>
+            <div class="alert alert-warning mb-0">
+                <i class="bi bi-exclamation-triangle"></i> No criteria defined for this round.
             </div>
-            <div class="col-md-4">
-                <h3 class="text-info">100%</h3>
-                <p class="text-muted">Total Weight</p>
-            </div>
-        </div>
+        <?php endif; ?>
     </div>
 </div>
 

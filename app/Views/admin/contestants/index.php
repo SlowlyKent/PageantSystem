@@ -34,6 +34,40 @@
     </div>
 <?php endif; ?>
 
+<!-- Summary Card -->
+<?php if (!empty($contestants)): ?>
+    <div class="mt-3 mb-3">
+        <div class="card summary-stats">
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <h3 class="text-primary"><?= count($contestants) ?></h3>
+                        <p class="text-muted">Total Contestants</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-success">
+                            <?= count(array_filter($contestants, fn($c) => $c['status'] === 'active')) ?>
+                        </h3>
+                        <p class="text-muted">Active</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-secondary">
+                            <?= count(array_filter($contestants, fn($c) => $c['status'] === 'inactive')) ?>
+                        </h3>
+                        <p class="text-muted">Inactive</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-danger">
+                            <?= count(array_filter($contestants, fn($c) => $c['status'] === 'disqualified')) ?>
+                        </h3>
+                        <p class="text-muted">Disqualified</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
 <!-- Contestants Table -->
 <div class="contestants-table">
     <div class="table-responsive">
@@ -124,39 +158,7 @@
     </div>
 </div>
 
-<!-- Summary Card -->
-<?php if (!empty($contestants)): ?>
-    <div class="mt-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-md-3">
-                        <h3 class="text-primary"><?= count($contestants) ?></h3>
-                        <p class="text-muted">Total Contestants</p>
-                    </div>
-                    <div class="col-md-3">
-                        <h3 class="text-success">
-                            <?= count(array_filter($contestants, fn($c) => $c['status'] === 'active')) ?>
-                        </h3>
-                        <p class="text-muted">Active</p>
-                    </div>
-                    <div class="col-md-3">
-                        <h3 class="text-secondary">
-                            <?= count(array_filter($contestants, fn($c) => $c['status'] === 'inactive')) ?>
-                        </h3>
-                        <p class="text-muted">Inactive</p>
-                    </div>
-                    <div class="col-md-3">
-                        <h3 class="text-danger">
-                            <?= count(array_filter($contestants, fn($c) => $c['status'] === 'disqualified')) ?>
-                        </h3>
-                        <p class="text-muted">Disqualified</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-<?php endif; ?>
+<!-- Summary Card moved to top -->
 
 <?= $this->endSection() ?>
 

@@ -30,11 +30,45 @@ class ResultsController extends BaseController
             'user_name' => session()->get('user_name') ?? 'Admin User'
         ]);
 
-        $rounds = $this->roundModel->findAll();
+        // Get all rounds ordered by round number
+        $rounds = $this->roundModel->orderBy('round_number', 'ASC')->findAll();
+
+        // Determine the current round to display leaderboard for
+        // Prefer the latest 'active', then 'completed', then any round with scores
+        $currentRound = $this->roundModel
+            ->where('status', 'active')
+            ->orderBy('round_number', 'DESC')
+            ->first();
+
+        if (!$currentRound) {
+            $currentRound = $this->roundModel
+                ->where('status', 'completed')
+                ->orderBy('round_number', 'DESC')
+                ->first();
+        }
+        
+        // If still no round, just get the latest round
+        if (!$currentRound && !empty($rounds)) {
+            $currentRound = end($rounds);
+        }
+
+        // Build leaderboard if we have a round
+        $leaderboard = [];
+        if (!empty($currentRound)) {
+            $leaderboard = $this->scoreModel->getRoundRankings($currentRound['id']);
+            // Map to Rank/Name pairs expected by the wireframe view
+            $leaderboard = array_map(function($row) {
+                return [
+                    'rank' => $row['rank'],
+                    'name' => $row['contestant_name']
+                ];
+            }, $leaderboard);
+        }
 
         $data = [
             'title' => 'Results & Rankings',
             'rounds' => $rounds,
+            'leaderboard' => $leaderboard,
         ];
 
         return view('admin/results/index', $data);
@@ -56,13 +90,26 @@ class ResultsController extends BaseController
                            ->with('error', 'Round not found.');
         }
 
-        // Get rankings
+        // Get rankings (will show any contestant who has scores in this round)
         $rankings = $this->scoreModel->getRoundRankings($roundId);
+        
+        // Get judge statistics for this round
+        $db = \Config\Database::connect();
+        $totalJudges = $db->table('round_judges')
+            ->where('round_id', $roundId)
+            ->countAllResults();
+        
+        $completedJudges = $db->table('round_judges')
+            ->where('round_id', $roundId)
+            ->where('completed_at IS NOT NULL', null, false)
+            ->countAllResults();
 
         $data = [
             'title' => 'Round Rankings',
             'round' => $round,
             'rankings' => $rankings,
+            'total_judges' => $totalJudges,
+            'completed_judges' => $completedJudges,
         ];
 
         return view('admin/results/view_round', $data);
@@ -121,40 +168,64 @@ class ResultsController extends BaseController
             'user_name' => session()->get('user_name') ?? 'Admin User'
         ]);
 
+        // Get all completed rounds
         $rounds = $this->roundModel->where('status', 'completed')->findAll();
-        $contestants = $this->contestantModel->where('status', 'active')->findAll();
-
+        
         $overallRankings = [];
-
-        foreach ($contestants as $contestant) {
-            $totalScore = 0;
-            $roundCount = 0;
-
-            foreach ($rounds as $round) {
-                $rankings = $this->scoreModel->getRoundRankings($round['id']);
+        
+        if (!empty($rounds)) {
+            // Get all contestants who have scores in any completed round
+            $db = \Config\Database::connect();
+            $roundIds = array_column($rounds, 'id');
+            
+            // Get unique contestant IDs from scores table
+            $contestantIdsData = $db->table('scores')
+                ->select('contestant_id')
+                ->whereIn('round_id', $roundIds)
+                ->groupBy('contestant_id')
+                ->get()
+                ->getResultArray();
+            
+            foreach ($contestantIdsData as $row) {
+                $contestantId = $row['contestant_id'];
                 
-                foreach ($rankings as $ranking) {
-                    if ($ranking['contestant_id'] == $contestant['id']) {
-                        $totalScore += $ranking['total_score'];
-                        $roundCount++;
-                        break;
+                // Get contestant details
+                $contestant = $this->contestantModel->find($contestantId);
+                if (!$contestant) {
+                    continue;
+                }
+                
+                $totalScore = 0;
+                $roundCount = 0;
+
+                // Calculate scores across all completed rounds
+                foreach ($rounds as $round) {
+                    $rankings = $this->scoreModel->getRoundRankings($round['id']);
+                    
+                    foreach ($rankings as $ranking) {
+                        if ($ranking['contestant_id'] == $contestantId) {
+                            // Sum the average scores (total_score already averaged by judges)
+                            $totalScore += $ranking['total_score'];
+                            $roundCount++;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if ($roundCount > 0) {
-                $overallRankings[] = [
-                    'contestant_id' => $contestant['id'],
-                    'contestant_number' => $contestant['contestant_number'],
-                    'contestant_name' => $contestant['first_name'] . ' ' . $contestant['last_name'],
-                    'profile_picture' => $contestant['profile_picture'],
-                    'total_score' => round($totalScore / $roundCount, 2),
-                    'rounds_completed' => $roundCount,
-                ];
+                if ($roundCount > 0) {
+                    $overallRankings[] = [
+                        'contestant_id' => $contestant['id'],
+                        'contestant_number' => $contestant['contestant_number'],
+                        'contestant_name' => $contestant['first_name'] . ' ' . $contestant['last_name'],
+                        'profile_picture' => $contestant['profile_picture'],
+                        'total_score' => round($totalScore, 2), // Total sum of average scores across all rounds
+                        'rounds_completed' => $roundCount,
+                    ];
+                }
             }
         }
 
-        // Sort by total score
+        // Sort by total score (descending)
         usort($overallRankings, function($a, $b) {
             return $b['total_score'] <=> $a['total_score'];
         });

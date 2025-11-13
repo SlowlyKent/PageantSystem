@@ -52,7 +52,7 @@
         <h1 class="h2">Enter Scores</h1>
         <p class="text-muted">Round <?= $round['round_number'] ?>: <?= esc($round['round_name']) ?></p>
     </div>
-    <a href="<?= base_url("judge/score-round/{$round['id']}") ?>" class="btn btn-secondary">
+    <a href="<?= base_url("judge/score-round/{$round['id']}") ?>" class="btn btn-secondary text-white">
         <i class="bi bi-arrow-left"></i> Back
     </a>
 </div>
@@ -85,21 +85,19 @@
     <input type="hidden" name="round_id" value="<?= $round['id'] ?>">
     <input type="hidden" name="contestant_id" value="<?= $contestant['id'] ?>">
     
-    <?php foreach ($round['segments'] as $segment): ?>
+    <?php if (!empty($round['criteria'])): ?>
         <div class="segment-card">
-            <div class="segment-header-<?= $segment['segment_number'] ?>">
+            <div class="segment-header-1">
                 <h4 class="mb-0">
-                    <i class="bi bi-<?= $segment['segment_number'] ?>-circle-fill"></i>
-                    Segment <?= $segment['segment_number'] ?>: <?= esc($segment['segment_name']) ?>
+                    <i class="bi bi-list-check"></i>
+                    Criteria
                 </h4>
-                <small class="opacity-75">Weight: <?= number_format($segment['weight_percentage'], 0) ?>%</small>
+                <small class="opacity-75">Total Weight: 100%</small>
             </div>
-            
             <div class="card-body">
-                <?php if (!empty($segment['criteria'])): ?>
-                    <?php foreach ($segment['criteria'] as $criteria): ?>
+                <?php foreach ($round['criteria'] as $criteria): ?>
                         <?php
-                        $existingScore = $existing_scores[$criteria['id']] ?? null;
+                    $existingScore = $existing_scores[$criteria['id']] ?? null;
                         $scoreValue = $existingScore['score'] ?? '';
                         ?>
                         
@@ -142,24 +140,21 @@
                                 </div>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <div class="alert alert-warning">
-                        No criteria defined for this segment.
-                    </div>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </div>
         </div>
-    <?php endforeach; ?>
+    <?php else: ?>
+        <div class="alert alert-warning">No criteria defined for this round.</div>
+    <?php endif; ?>
     
     <!-- Submit Button -->
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="d-flex gap-2 align-items-center">
-                <button type="submit" class="btn btn-primary btn-lg">
+                <button type="submit" class="btn btn-primary btn-lg text-white">
                     <i class="bi bi-check-circle"></i> Submit Scores
                 </button>
-                <a href="<?= base_url("judge/score-round/{$round['id']}") ?>" class="btn btn-secondary btn-lg">
+                <a href="<?= base_url("judge/score-round/{$round['id']}") ?>" class="btn btn-secondary btn-lg text-white">
                     <i class="bi bi-x-circle"></i> Cancel
                 </a>
                 <div class="ms-auto text-muted">

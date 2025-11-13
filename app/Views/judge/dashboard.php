@@ -2,229 +2,214 @@
 
 <?= $this->section('title') ?>Judge Dashboard<?= $this->endSection() ?>
 
+<?= $this->section('styles') ?>
+<style>
+    body {
+        overflow-x: hidden;
+    }
+    main {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+    .container-fluid {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
+    }
+    [class*="col-"] {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    .stat-card {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    .stat-icon {
+        font-size: 3rem;
+        opacity: 0.3;
+    }
+    .action-btn {
+        border-radius: 10px;
+        padding: 15px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    .action-btn:hover {
+        transform: scale(1.05);
+    }
+    .section-card {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">
-                    <i class="bi bi-star"></i> Judge Dashboard
-                </h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <button type="button" class="btn btn-sm btn-outline-secondary">
-                        <i class="bi bi-calendar"></i> <?= date('F d, Y') ?>
-                    </button>
-                </div>
+<div class="container-fluid p-4">
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <?php 
+        $settingsModel = new \App\Models\SettingsModel();
+        $logo = $settingsModel->getSetting('logo');
+        $titleFont = $settingsModel->getSetting('title_font') ?: 'Arial, sans-serif';
+        if ($logo): 
+        ?>
+            <img src="<?= base_url('uploads/settings/' . $logo) ?>" 
+                 alt="Logo" 
+                 style="width: 60px; height: 60px; object-fit: contain;">
+        <?php endif; ?>
+        <h1 class="h2 mb-0" style="font-family: <?= esc($titleFont) ?>;"><?= esc(system_name()) ?></h1>
+    </div>
+    <div>
+        <a href="<?= base_url('logout') ?>" class="btn btn-secondary text-white">
+            Logout
+        </a>
+    </div>
+</div>
+
+<!-- Welcome Alert -->
+<?php if (!empty($active_round)): ?>
+    <?php if ($eliminated_contestants > 0): ?>
+        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert" style="border-radius: 15px; border-left: 5px solid #ffc107;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <strong>Heads up!</strong> <?= $eliminated_contestants ?> <?= $eliminated_contestants == 1 ? 'contestant has' : 'contestants have' ?> been eliminated in this round.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php elseif ($completed_scores > 0): ?>
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" style="border-radius: 15px; border-left: 5px solid #198754;">
+            <i class="bi bi-check-circle-fill"></i>
+            <strong>Great job, Judge!</strong> You have completed scoring for all <?= $completed_scores ?> <?= $completed_scores == 1 ? 'contestant' : 'contestants' ?> in this round.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+<?php else: ?>
+    <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert" style="border-radius: 15px; border-left: 5px solid #ffc107;">
+        <i class="bi bi-info-circle-fill"></i>
+        <strong>Welcome back, Judge!</strong> There is currently no active round. Please wait for the admin to activate a round.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-icon beige">
+                <i class="bi bi-person-x-fill"></i>
             </div>
-
-            <!-- Welcome Message -->
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                <i class="bi bi-info-circle"></i>
-                <strong>Welcome back, <?= esc($user['name'] ?? 'Judge') ?>!</strong> 
-                You have 5 contestants pending for scoring.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="stats-content">
+                <h3><?= $eliminated_contestants ?></h3>
+                <p>Eliminated Contestants</p>
             </div>
-
-            <!-- Statistics Cards -->
-            <div class="row mb-4">
-                <!-- Pending Scores Card -->
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                        Pending Scores
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="bi bi-hourglass-split fs-2 text-warning"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Completed Scores Card -->
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                        Completed Scores
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">20</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="bi bi-check-circle fs-2 text-success"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Contestants Card -->
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-info shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                        Total Contestants
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">25</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="bi bi-people fs-2 text-info"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Average Score Card -->
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Average Score
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">8.5</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="bi bi-graph-up-arrow fs-2 text-primary"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-icon green">
+                <i class="bi bi-check-circle-fill"></i>
             </div>
-
-            <!-- Main Content -->
-            <div class="row">
-                <!-- Pending Contestants to Score -->
-                <div class="col-lg-8 mb-4">
-                    <div class="card shadow">
-                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-primary">
-                                <i class="bi bi-clipboard-check"></i> Pending Contestants
-                            </h6>
-                            <a href="<?= base_url('judge/contestants') ?>" class="btn btn-sm btn-primary">
-                                View All
-                            </a>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Contestant Name</th>
-                                            <th>Category</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Maria Santos</td>
-                                            <td>Evening Gown</td>
-                                            <td><span class="badge bg-warning">Pending</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-pencil"></i> Score
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>Ana Rodriguez</td>
-                                            <td>Swimsuit</td>
-                                            <td><span class="badge bg-warning">Pending</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-pencil"></i> Score
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>Sofia Cruz</td>
-                                            <td>Talent</td>
-                                            <td><span class="badge bg-warning">Pending</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-pencil"></i> Score
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions & Recent Scores -->
-                <div class="col-lg-4 mb-4">
-                    <!-- Quick Actions -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">
-                                <i class="bi bi-lightning"></i> Quick Actions
-                            </h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <a href="<?= base_url('judge/contestants') ?>" class="btn btn-primary">
-                                    <i class="bi bi-people"></i> Score Contestants
-                                </a>
-                                <a href="<?= base_url('judge/submit-score') ?>" class="btn btn-success">
-                                    <i class="bi bi-pencil-square"></i> Submit Score
-                                </a>
-                                <a href="<?= base_url('judge/history') ?>" class="btn btn-info">
-                                    <i class="bi bi-clock-history"></i> View History
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Scores -->
-                    <div class="card shadow">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">
-                                <i class="bi bi-star-fill"></i> Recent Scores
-                            </h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="list-group list-group-flush">
-                                <div class="list-group-item px-0">
-                                    <div class="d-flex justify-content-between">
-                                        <strong>Emma Johnson</strong>
-                                        <span class="badge bg-success">9.5</span>
-                                    </div>
-                                    <small class="text-muted">Evening Gown - 10 mins ago</small>
-                                </div>
-                                <div class="list-group-item px-0">
-                                    <div class="d-flex justify-content-between">
-                                        <strong>Lisa Williams</strong>
-                                        <span class="badge bg-success">8.8</span>
-                                    </div>
-                                    <small class="text-muted">Swimsuit - 30 mins ago</small>
-                                </div>
-                                <div class="list-group-item px-0">
-                                    <div class="d-flex justify-content-between">
-                                        <strong>Sarah Brown</strong>
-                                        <span class="badge bg-success">9.2</span>
-                                    </div>
-                                    <small class="text-muted">Talent - 1 hour ago</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="stats-content">
+                <h3><?= $completed_scores ?></h3>
+                <p>Completed Scores</p>
             </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-icon blue">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="stats-content">
+                <h3><?= $total_contestants ?></h3>
+                <p>Total Contestants</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="stats-card">
+            <div class="stats-icon orange">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div class="stats-content">
+                <h3><?= $average_score ?></h3>
+                <p>Average Score</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions-box mb-4">
+    <div class="quick-actions-header">Quick Actions</div>
+    <div class="quick-actions-buttons">
+        <a href="<?= base_url('judge/select-round') ?>" class="quick-action-btn primary">Start Scoring</a>
+        <a href="<?= base_url('judge/contestants') ?>" class="quick-action-btn">View Contestants</a>
+    </div>
+</div>
+
+<!-- Bottom Section -->
+<div class="row g-3">
+    <!-- Current Round -->
+    <div class="col-md-6">
+        <div class="section-card">
+            <h5 class="mb-3"><i class="bi bi-trophy"></i> Current Round</h5>
+            <?php if (!empty($active_round)): ?>
+                <div class="text-center py-5">
+                    <i class="bi bi-circle-fill text-primary" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3"><?= esc($active_round['round_name']) ?></h4>
+                    <p class="text-muted"><?= esc($active_round['description'] ?? 'Round ' . $active_round['round_number']) ?></p>
+                    <div class="mt-4">
+                        <span class="badge bg-success fs-6">Active</span>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-info-circle" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">No Active Round</h5>
+                    <p>Wait for the admin to start a new round</p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Current Leaderboard -->
+    <div class="col-md-6">
+        <div class="section-card">
+            <h5 class="mb-3"><i class="bi bi-bar-chart-fill"></i> Current Leaderboard</h5>
+            <?php if (!empty($current_leaderboard)): ?>
+                <div class="list-group list-group-flush">
+                    <?php foreach ($current_leaderboard as $index => $contestant): ?>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <span class="badge <?= $index === 0 ? 'bg-warning' : 'bg-secondary' ?> me-2"><?= $index + 1 ?></span>
+                                <strong><?= esc($contestant['name']) ?></strong>
+                            </div>
+                            <span class="badge bg-primary"><?= round($contestant['avg_score'], 1) ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="text-muted text-center py-3">
+                    <i class="bi bi-info-circle"></i> No scores available yet.
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+</div>
 
 <?= $this->endSection() ?>

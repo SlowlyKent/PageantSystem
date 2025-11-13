@@ -3,6 +3,10 @@
 <?= $this->section('title') ?>System Settings<?= $this->endSection() ?>
 
 <?= $this->section('styles') ?>
+<!-- Google Fonts for Font Preview -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@400;700&family=Lora:wght@400;700&family=Merriweather:wght@400;700;900&family=EB+Garamond:wght@400;700&family=Montserrat:wght@400;700;900&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
 <style>
     /* Settings Page Styles */
     .settings-card {
@@ -52,27 +56,6 @@
         border: none;
         border-radius: 8px;
         cursor: pointer;
-    }
-    
-    .theme-preset-btn {
-        padding: 15px;
-        border: 2px solid #e0e0e0;
-        border-radius: 10px;
-        background: white;
-        cursor: pointer;
-        transition: all 0.3s;
-        text-align: center;
-    }
-    
-    .theme-preset-btn:hover {
-        border-color: #667eea;
-        background: #f8f9ff;
-    }
-    
-    .theme-preset-btn.active {
-        border-color: #667eea;
-        background: #667eea;
-        color: white;
     }
     
     .theme-preview-box {
@@ -229,6 +212,48 @@
                     <small class="text-muted">Allowed: JPG, PNG, GIF (Max 2MB)</small>
                 </div>
                 
+                <!-- Title Font Selection -->
+                <div class="mb-3">
+                    <label for="title_font" class="form-label">
+                        <i class="bi bi-fonts"></i> Pageant Title Font
+                    </label>
+                    <select 
+                        class="form-select" 
+                        id="title_font" 
+                        name="title_font"
+                        onchange="updateFontPreview(this.value)"
+                    >
+                        <optgroup label="Elegant & Sophisticated">
+                            <option value="'Playfair Display', serif" <?= ($settings['title_font'] ?? '') === "'Playfair Display', serif" ? 'selected' : '' ?>>Playfair Display (Royal & Elegant)</option>
+                            <option value="'Cinzel', serif" <?= ($settings['title_font'] ?? '') === "'Cinzel', serif" ? 'selected' : '' ?>>Cinzel (Regal & Classical)</option>
+                            <option value="'Cormorant Garamond', serif" <?= ($settings['title_font'] ?? '') === "'Cormorant Garamond', serif" ? 'selected' : '' ?>>Cormorant Garamond (Graceful & Refined)</option>
+                            <option value="'Lora', serif" <?= ($settings['title_font'] ?? '') === "'Lora', serif" ? 'selected' : '' ?>>Lora (Elegant & Modern)</option>
+                            <option value="'Merriweather', serif" <?= ($settings['title_font'] ?? '') === "'Merriweather', serif" ? 'selected' : '' ?>>Merriweather (Sophisticated)</option>
+                            <option value="'EB Garamond', serif" <?= ($settings['title_font'] ?? '') === "'EB Garamond', serif" ? 'selected' : '' ?>>EB Garamond (Timeless & Classic)</option>
+                        </optgroup>
+                        <optgroup label="Classic & Traditional">
+                            <option value="'Times New Roman', serif" <?= ($settings['title_font'] ?? '') === "'Times New Roman', serif" ? 'selected' : '' ?>>Times New Roman (Classic)</option>
+                            <option value="Georgia, serif" <?= ($settings['title_font'] ?? '') === 'Georgia, serif' ? 'selected' : '' ?>>Georgia (Formal)</option>
+                            <option value="'Palatino Linotype', serif" <?= ($settings['title_font'] ?? '') === "'Palatino Linotype', serif" ? 'selected' : '' ?>>Palatino (Refined)</option>
+                            <option value="'Baskerville', serif" <?= ($settings['title_font'] ?? '') === "'Baskerville', serif" ? 'selected' : '' ?>>Baskerville (Distinguished)</option>
+                        </optgroup>
+                        <optgroup label="Modern & Bold">
+                            <option value="'Montserrat', sans-serif" <?= ($settings['title_font'] ?? '') === "'Montserrat', sans-serif" ? 'selected' : '' ?>>Montserrat (Bold & Contemporary)</option>
+                            <option value="'Raleway', sans-serif" <?= ($settings['title_font'] ?? '') === "'Raleway', sans-serif" ? 'selected' : '' ?>>Raleway (Elegant & Thin)</option>
+                            <option value="Arial, sans-serif" <?= ($settings['title_font'] ?? '') === 'Arial, sans-serif' ? 'selected' : '' ?>>Arial (Clean & Modern)</option>
+                            <option value="Verdana, sans-serif" <?= ($settings['title_font'] ?? '') === 'Verdana, sans-serif' ? 'selected' : '' ?>>Verdana (Bold & Clear)</option>
+                            <option value="Impact, sans-serif" <?= ($settings['title_font'] ?? '') === 'Impact, sans-serif' ? 'selected' : '' ?>>Impact (Strong & Powerful)</option>
+                        </optgroup>
+                    </select>
+                    <small class="text-muted">Choose the font style for the pageant title display</small>
+                    
+                    <!-- Font Preview -->
+                    <div class="mt-2 p-3 bg-light rounded">
+                        <p class="mb-1 small text-muted">Preview:</p>
+                        <h4 id="fontPreview" style="font-family: <?= esc($settings['title_font'] ?? 'Arial, sans-serif') ?>; margin: 0;"><?= esc($settings['system_name'] ?? 'PAGEANT TITLE') ?></h4>
+                    </div>
+                </div>
+                
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-save"></i> Save General Settings
                 </button>
@@ -241,43 +266,12 @@
                 <h5><i class="bi bi-palette-fill"></i> Theme Settings</h5>
             </div>
             
-            <!-- Theme Presets (Quick Selection) -->
-            <div class="mb-4">
-                <label class="form-label"><i class="bi bi-stars"></i> Quick Theme Presets</label>
-                <div class="row g-3">
-                    <div class="col-3">
-                        <div class="theme-preset-btn" data-preset="classic">
-                            <i class="bi bi-gem" style="font-size: 24px;"></i>
-                            <div class="mt-2"><strong>Classic</strong></div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="theme-preset-btn" data-preset="modern">
-                            <i class="bi bi-lightning-fill" style="font-size: 24px;"></i>
-                            <div class="mt-2"><strong>Modern</strong></div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="theme-preset-btn" data-preset="youthful">
-                            <i class="bi bi-sun-fill" style="font-size: 24px;"></i>
-                            <div class="mt-2"><strong>Youthful</strong></div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="theme-preset-btn" data-preset="elegant">
-                            <i class="bi bi-award-fill" style="font-size: 24px;"></i>
-                            <div class="mt-2"><strong>Elegant</strong></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
             <!-- FORM 2: Theme Settings (Colors & Background) -->
             <form action="<?= base_url('admin/settings/update-theme') ?>" method="post" enctype="multipart/form-data" id="themeForm">
                 <?= csrf_field() ?>
                 
                 <!-- Hidden field for selected preset -->
-                <input type="hidden" name="theme_preset" id="theme_preset" value="<?= esc($settings['theme_preset'] ?? 'classic') ?>">
+                <input type="hidden" name="theme_preset" id="theme_preset" value="<?= esc($settings['theme_preset'] ?? 'custom') ?>">
                 
                 <!-- Color Pickers -->
                 <div class="mb-4">
@@ -324,41 +318,20 @@
                             <p class="small text-muted mb-0">Main text color</p>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Background Type -->
-                <div class="mb-3">
-                    <label class="form-label"><i class="bi bi-image"></i> Background Type</label>
-                    <select class="form-select" name="background_type" id="background_type">
-                        <option value="gradient" <?= ($settings['background_type'] ?? 'gradient') == 'gradient' ? 'selected' : '' ?>>Gradient (Primary + Accent)</option>
-                        <option value="solid" <?= ($settings['background_type'] ?? '') == 'solid' ? 'selected' : '' ?>>Solid Color</option>
-                        <option value="image" <?= ($settings['background_type'] ?? '') == 'image' ? 'selected' : '' ?>>Background Image</option>
-                    </select>
-                </div>
-                
-                <!-- Background Color (shown when solid is selected) -->
-                <div class="mb-3" id="bg_color_section" style="display: none;">
-                    <label for="background_color" class="form-label">Background Color</label>
-                    <input 
-                        type="color" 
-                        class="form-control" 
-                        id="background_color" 
-                        name="background_color" 
-                        value="<?= esc($settings['background_color'] ?? '#f8f9fa') ?>"
-                    >
-                </div>
-                
-                <!-- Background Image (shown when image is selected) -->
-                <div class="mb-3" id="bg_image_section" style="display: none;">
-                    <label for="background_image" class="form-label">Background Image</label>
-                    <input 
-                        type="file" 
-                        class="form-control" 
-                        id="background_image" 
-                        name="background_image" 
-                        accept="image/jpeg,image/png"
-                    >
-                    <small class="text-muted">Recommended: 1920x1080px</small>
+
+                    <!-- Button Color -->
+                    <div class="color-picker-group">
+                        <input 
+                            type="color" 
+                            id="button_color" 
+                            name="button_color" 
+                            value="<?= esc($settings['button_color'] ?? ($settings['primary_color'] ?? '#667eea')) ?>"
+                        >
+                        <div>
+                            <strong>Button Color</strong>
+                            <p class="small text-muted mb-0">Color for primary buttons</p>
+                        </div>
+                    </div>
                 </div>
                 
                 <button type="submit" class="btn btn-primary">
@@ -409,15 +382,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const primaryColor = document.getElementById('primary_color');
     const accentColor = document.getElementById('accent_color');
     const textColor = document.getElementById('text_color');
-    const backgroundType = document.getElementById('background_type');
-    const backgroundColor = document.getElementById('background_color');
+    const buttonColor = document.getElementById('button_color');
     
     // Get preview elements
     const previewBox = document.getElementById('previewBox');
     const previewBtn = document.getElementById('previewBtn');
     const previewText = document.getElementById('previewText');
     const previewDescription = document.getElementById('previewDescription');
+    const presetField = document.getElementById('theme_preset');
     
+    if (presetField && presetField.value !== 'custom') {
+        presetField.value = 'custom';
+    }
+
     /**
      * Update preview colors
      * This function applies the selected colors to the preview box
@@ -426,118 +403,41 @@ document.addEventListener('DOMContentLoaded', function() {
         const primary = primaryColor.value;
         const accent = accentColor.value;
         const text = textColor.value;
-        const bgType = backgroundType.value;
-        
-        // Update preview box background
-        if (bgType === 'gradient') {
-            previewBox.style.background = `linear-gradient(135deg, ${primary} 0%, ${accent} 100%)`;
-        } else if (bgType === 'solid') {
-            previewBox.style.background = backgroundColor.value;
-        }
-        
+        const button = (buttonColor?.value || primary);
+
+        // Gradient preview background based on colors
+        previewBox.style.background = `linear-gradient(135deg, ${primary} 0%, ${accent} 100%)`;
+
         // Update button colors
-        previewBtn.style.background = primary;
+        previewBtn.style.background = button;
+        previewBtn.style.borderColor = button;
         previewBtn.style.color = 'white';
-        
-        // Update text colors
-        previewText.style.color = bgType === 'gradient' ? 'white' : text;
-        previewDescription.style.color = bgType === 'gradient' ? 'rgba(255,255,255,0.9)' : text;
+
+        // Text colors
+        previewText.style.color = text;
+        previewDescription.style.color = text;
     }
     
     /**
      * Show/hide background options based on type
      */
-    function toggleBackgroundOptions() {
-        const bgType = backgroundType.value;
-        const colorSection = document.getElementById('bg_color_section');
-        const imageSection = document.getElementById('bg_image_section');
-        
-        // Hide all sections first
-        colorSection.style.display = 'none';
-        imageSection.style.display = 'none';
-        
-        // Show relevant section
-        if (bgType === 'solid') {
-            colorSection.style.display = 'block';
-        } else if (bgType === 'image') {
-            imageSection.style.display = 'block';
-        }
-        
-        updatePreview();
-    }
-    
-    /**
-     * Apply theme preset
-     * When user clicks a preset button, apply those colors
-     */
-    function applyPreset(preset) {
-        // Theme preset colors
-        const presets = {
-            classic: {
-                primary: '#667eea',
-                accent: '#764ba2',
-                text: '#333333'
-            },
-            modern: {
-                primary: '#6366f1',
-                accent: '#ec4899',
-                text: '#1f2937'
-            },
-            youthful: {
-                primary: '#f59e0b',
-                accent: '#10b981',
-                text: '#374151'
-            },
-            elegant: {
-                primary: '#8b5cf6',
-                accent: '#d946ef',
-                text: '#1e293b'
-            }
-        };
-        
-        // Check if preset exists
-        if (presets[preset]) {
-            // Update color inputs
-            primaryColor.value = presets[preset].primary;
-            accentColor.value = presets[preset].accent;
-            textColor.value = presets[preset].text;
-            
-            // Update hidden field
-            document.getElementById('theme_preset').value = preset;
-            
-            // Update preview
-            updatePreview();
-            
-            // Update active button
-            document.querySelectorAll('.theme-preset-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.closest('.theme-preset-btn').classList.add('active');
-        }
-    }
+    // no background type toggle needed
     
     // Event Listeners (when user interacts with inputs)
-    primaryColor.addEventListener('input', updatePreview);
-    accentColor.addEventListener('input', updatePreview);
-    textColor.addEventListener('input', updatePreview);
-    backgroundType.addEventListener('change', toggleBackgroundOptions);
-    backgroundColor.addEventListener('input', updatePreview);
-    
-    // Preset buttons click handler
-    document.querySelectorAll('.theme-preset-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const preset = this.getAttribute('data-preset');
-            applyPreset(preset);
-        });
-    });
+    function handleColorChange() {
+        if (presetField) {
+            presetField.value = 'custom';
+        }
+        updatePreview();
+    }
+
+    primaryColor.addEventListener('input', handleColorChange);
+    accentColor.addEventListener('input', handleColorChange);
+    textColor.addEventListener('input', handleColorChange);
+    if (buttonColor) buttonColor.addEventListener('input', handleColorChange);
     
     // Initialize on page load
     updatePreview();
-    toggleBackgroundOptions();
-    
-    // Mark current preset as active
-    const currentPreset = document.getElementById('theme_preset').value;
-    document.querySelector(`[data-preset="${currentPreset}"]`)?.classList.add('active');
 });
 
 /**

@@ -2,6 +2,11 @@
 // Get user role from session
 $userRole = session()->get('user_role') ?? 'guest';
 $currentUrl = current_url();
+
+// Don't show sidebar for judges
+if ($userRole === 'judge') {
+    return;
+}
 ?>
 
 <!-- Sidebar -->
@@ -10,9 +15,13 @@ $currentUrl = current_url();
         
         <?php if ($userRole === 'admin'): ?>
             <!-- ADMIN SIDEBAR -->
-            <div class="sidebar-header">
-                <div class="crown-icon">👑</div>
-                <h4>Admin Panel</h4>
+            <div class="sidebar-header text-center">
+                <?php if (system_logo()): ?>
+                    <img src="<?= system_logo() ?>" alt="Logo" style="height:48px; width:auto; border-radius:6px; margin-bottom:8px; background:#fff; padding:4px;">
+                <?php else: ?>
+                    <div class="crown-icon" style="font-size:28px;">👑</div>
+                <?php endif; ?>
+                <h4 style="margin:6px 0 0;"><?= esc(system_name()) ?></h4>
                 <p>Welcome, System Administrator</p>
             </div>
             

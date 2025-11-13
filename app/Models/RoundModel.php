@@ -16,8 +16,13 @@ class RoundModel extends Model
         'round_number',
         'round_name',
         'description',
-        'segment_count',
-        'status'
+        'max_score',
+        'status',
+        'round_order',
+        'is_elimination',
+        'is_final',
+        'is_locked',
+        'elimination_quota'
     ];
 
     protected $useTimestamps = true;
@@ -27,12 +32,11 @@ class RoundModel extends Model
 
     protected $validationRules = [
         'round_number' => 'required|numeric|is_unique[rounds.round_number,id,{id}]',
-        'round_name'   => 'required|min_length[3]|max_length[100]',
-        'segment_count' => 'required|in_list[1,2]',
+        'round_name'   => 'required|min_length[3]|max_length[100]'
     ];
 
     /**
-     * Get round with all segments and criteria
+     * Get round with all criteria (no segments)
      */
     public function getRoundWithDetails($id)
     {
@@ -43,34 +47,25 @@ class RoundModel extends Model
             return null;
         }
 
-        // Get segments
-        $segments = $db->table('round_segments')
+        // Get criteria directly tied to round
+        $criteria = $db->table('round_criteria')
             ->where('round_id', $id)
-            ->orderBy('segment_number', 'ASC')
+            ->orderBy('order', 'ASC')
             ->get()
             ->getResultArray();
 
-        // Get criteria for each segment
-        foreach ($segments as &$segment) {
-            $segment['criteria'] = $db->table('criteria')
-                ->where('segment_id', $segment['id'])
-                ->orderBy('order', 'ASC')
-                ->get()
-                ->getResultArray();
-        }
-
-        $round['segments'] = $segments;
+        $round['criteria'] = $criteria;
         return $round;
     }
 
     /**
-     * Get all rounds with segment count
+     * Get all rounds with criteria count
      */
-    public function getAllWithSegmentCount()
+    public function getAllWithCriteriaCount()
     {
         return $this->select('rounds.*, 
-                             COUNT(round_segments.id) as actual_segment_count')
-            ->join('round_segments', 'round_segments.round_id = rounds.id', 'left')
+                             COUNT(round_criteria.id) as criteria_count')
+            ->join('round_criteria', 'round_criteria.round_id = rounds.id', 'left')
             ->groupBy('rounds.id')
             ->orderBy('rounds.round_number', 'ASC')
             ->findAll();
@@ -83,5 +78,29 @@ class RoundModel extends Model
     {
         $lastRound = $this->orderBy('round_number', 'DESC')->first();
         return $lastRound ? $lastRound['round_number'] + 1 : 1;
+    }
+
+    /**
+     * Get rounds ordered by round_order
+     */
+    public function getAllOrdered()
+    {
+        return $this->orderBy('round_order', 'ASC')->findAll();
+    }
+
+    /**
+     * Lock a round
+     */
+    public function lockRound($id)
+    {
+        return $this->update($id, ['is_locked' => 1, 'status' => 'completed']);
+    }
+
+    /**
+     * Unlock a round (only if final results not declared)
+     */
+    public function unlockRound($id)
+    {
+        return $this->update($id, ['is_locked' => 0, 'status' => 'active']);
     }
 }

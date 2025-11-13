@@ -40,13 +40,13 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Role', 'filter' => 'aut
     $routes->post('contestants/remove-photo/(:num)', 'ContestantsController::removePhoto/$1');
     
     // Judges management (CRUD)
-    $routes->get('judges', 'JudgesController::index');
-    $routes->get('judges/create', 'JudgesController::create');
-    $routes->post('judges/store', 'JudgesController::store');
-    $routes->get('judges/view/(:num)', 'JudgesController::view/$1');
-    $routes->get('judges/edit/(:num)', 'JudgesController::edit/$1');
-    $routes->post('judges/update/(:num)', 'JudgesController::update/$1');
-    $routes->post('judges/delete/(:num)', 'JudgesController::delete/$1');
+    $routes->get('judges', 'JudgeManagementController::index');
+    $routes->get('judges/create', 'JudgeManagementController::create');
+    $routes->post('judges/store', 'JudgeManagementController::store');
+    $routes->get('judges/view/(:num)', 'JudgeManagementController::view/$1');
+    $routes->get('judges/edit/(:num)', 'JudgeManagementController::edit/$1');
+    $routes->post('judges/update/(:num)', 'JudgeManagementController::update/$1');
+    $routes->post('judges/delete/(:num)', 'JudgeManagementController::delete/$1');
     
     // Rounds & Criteria management
     $routes->get('rounds-criteria', 'RoundsCriteriaController::index');
@@ -54,6 +54,14 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Role', 'filter' => 'aut
     $routes->post('rounds-criteria/store', 'RoundsCriteriaController::store');
     $routes->get('rounds-criteria/view/(:num)', 'RoundsCriteriaController::view/$1');
     $routes->post('rounds-criteria/delete/(:num)', 'RoundsCriteriaController::delete/$1');
+    $routes->get('rounds-criteria/edit/(:num)', 'RoundsCriteriaController::edit/$1');
+    $routes->post('rounds-criteria/update/(:num)', 'RoundsCriteriaController::update/$1');
+    $routes->post('rounds-criteria/lock/(:num)', 'RoundsCriteriaController::lock/$1');
+    $routes->post('rounds-criteria/unlock/(:num)', 'RoundsCriteriaController::unlock/$1');
+    $routes->post('rounds-criteria/mark-completed/(:num)', 'RoundsCriteriaController::markCompleted/$1');
+    $routes->post('rounds-criteria/activate/(:num)', 'RoundsCriteriaController::activate/$1');
+    $routes->post('rounds-criteria/reset-judges/(:num)', 'RoundsCriteriaController::resetJudgeCompletions/$1');
+    $routes->post('rounds-criteria/eliminate/(:num)', 'RoundsCriteriaController::eliminate/$1');
     
     // Results & Rankings
     $routes->get('results', 'ResultsController::index');
@@ -81,6 +89,13 @@ $routes->group('judge', ['namespace' => 'App\Controllers\Role', 'filter' => 'aut
     $routes->get('score-round/(:num)', 'JudgeController::scoreRound/$1');
     $routes->get('score-contestant/(:num)/(:num)', 'JudgeController::scoreContestant/$1/$2');
     $routes->post('submit-scores', 'JudgeController::submitScores');
+    $routes->post('submit-all-scores', 'JudgeController::submitAllScores');
+    $routes->post('auto-save-score', 'JudgeController::autoSaveScore');
+    $routes->get('mark-complete/(:num)', 'JudgeController::markComplete/$1');
+    $routes->get('round-results/(:num)', 'JudgeController::roundResults/$1');
+    
+    // Rankings
+    $routes->get('rankings', 'JudgeController::rankings');
     
     // Legacy routes
     $routes->get('contestants', 'JudgeController::contestants');

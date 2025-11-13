@@ -23,6 +23,78 @@
         font-size: 16px;
         margin-bottom: 20px;
     }
+
+    @media print {
+        .no-print,
+        .sidebar,
+        header,
+        nav {
+            display: none !important;
+        }
+
+        body {
+            background: #ffffff;
+            font-size: 12px;
+        }
+
+        .container-fluid,
+        .container {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .card {
+            box-shadow: none !important;
+            border: 1px solid #d1d5db !important;
+            margin-bottom: 12px !important;
+        }
+
+        .card-body {
+            padding: 18px !important;
+        }
+
+        .card-header {
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+            border-bottom: 1px solid #d1d5db !important;
+            padding: 12px 18px !important;
+        }
+
+        .info-label {
+            color: #0f172a !important;
+            margin-bottom: 4px !important;
+        }
+
+        .info-value {
+            margin-bottom: 12px !important;
+            color: #1f2937 !important;
+        }
+
+        a[href]:after {
+            content: "";
+        }
+
+        .profile-photo {
+            border: 1px solid #d1d5db !important;
+            box-shadow: none !important;
+        }
+
+        @page {
+            margin: 15mm;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        .print-layout {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+    }
+    }
 </style>
 <?= $this->endSection() ?>
 
@@ -34,19 +106,20 @@
         <h1 class="h2"><i class="bi bi-eye-fill"></i> Contestant Details</h1>
         <p class="text-muted">View contestant information</p>
     </div>
-    <div class="d-flex gap-2">
-        <a href="<?= base_url('admin/contestants/edit/' . $contestant['id']) ?>" class="btn btn-warning">
-            <i class="bi bi-pencil-fill"></i> Edit
-        </a>
+    <div class="d-flex gap-2 no-print">
         <a href="<?= base_url('admin/contestants') ?>" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Back to List
-        </a>
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+        <button type="button" class="btn btn-outline-primary" onclick="window.print()">
+            <i class="bi bi-printer"></i> Print
+        </button>
     </div>
 </div>
 
-<div class="row">
-    <!-- Left Column: Photo & Basic Info -->
-    <div class="col-lg-4">
+<div class="print-layout">
+<div class="row g-4">
+    <!-- Photo & Basic Info -->
+    <div class="col-lg-4 col-xl-3">
         <div class="card shadow-sm mb-3">
             <div class="card-body text-center">
                 <?php if (!empty($contestant['profile_picture'])): ?>
@@ -80,33 +153,11 @@
                 </span>
             </div>
         </div>
-        
-        <!-- Quick Actions -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-lightning-fill"></i> Quick Actions</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="<?= base_url('admin/contestants/edit/' . $contestant['id']) ?>" 
-                       class="btn btn-warning">
-                        <i class="bi bi-pencil-fill"></i> Edit Information
-                    </a>
-                    
-                    <button 
-                        onclick="confirmDelete(<?= $contestant['id'] ?>, '<?= esc($contestant['first_name']) ?> <?= esc($contestant['last_name']) ?>')"
-                        class="btn btn-danger">
-                        <i class="bi bi-trash-fill"></i> Delete Contestant
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
     
-    <!-- Right Column: Detailed Information -->
-    <div class="col-lg-8">
-        <!-- Personal Information -->
-        <div class="card shadow-sm mb-3">
+    <!-- Personal Information -->
+    <div class="col-lg-8 col-xl-9">
+        <div class="card shadow-sm h-100">
             <div class="card-header bg-info text-white">
                 <h5 class="mb-0"><i class="bi bi-person-circle"></i> Personal Information</h5>
             </div>
@@ -161,9 +212,11 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Contact Information -->
-        <div class="card shadow-sm mb-3">
+    </div>
+    
+    <!-- Contact Information -->
+    <div class="col-12">
+        <div class="card shadow-sm">
             <div class="card-header bg-success text-white">
                 <h5 class="mb-0"><i class="bi bi-telephone-fill"></i> Contact Information</h5>
             </div>
@@ -206,8 +259,10 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Additional Information -->
+    </div>
+    
+    <!-- Additional Information -->
+    <div class="col-12">
         <div class="card shadow-sm">
             <div class="card-header bg-warning">
                 <h5 class="mb-0"><i class="bi bi-stars"></i> Additional Information</h5>
@@ -227,6 +282,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <?= $this->endSection() ?>

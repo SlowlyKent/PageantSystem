@@ -98,85 +98,10 @@
     </div>
 <?php endif; ?>
 
-<!-- Judges Table -->
-<div class="judges-table">
-    <div class="table-responsive">
-        <table class="table table-hover mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>#</th>
-                    <th>Username</th>
-                    <th>Full Name</th>
-                    <th>Email</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($judges)): ?>
-                    <tr>
-                        <td colspan="7" class="text-center py-5">
-                            <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
-                            <p class="text-muted mt-3">No judges found. Click "Add New Judge" to create one.</p>
-                        </td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($judges as $index => $judge): ?>
-                        <tr>
-                            <td><?= $index + 1 ?></td>
-                            <td>
-                                <strong><?= esc($judge['username']) ?></strong>
-                            </td>
-                            <td><?= esc($judge['full_name']) ?></td>
-                            <td>
-                                <i class="bi bi-envelope"></i> <?= esc($judge['email']) ?>
-                            </td>
-                            <td>
-                                <span class="status-badge status-<?= $judge['status'] ?>">
-                                    <?= ucfirst($judge['status']) ?>
-                                </span>
-                            </td>
-                            <td>
-                                <small class="text-muted">
-                                    <?= date('M d, Y', strtotime($judge['created_at'])) ?>
-                                </small>
-                            </td>
-                            <td class="text-center">
-                                <!-- View Button -->
-                                <a href="<?= base_url('admin/judges/view/' . $judge['id']) ?>" 
-                                   class="btn btn-sm action-btn btn-view"
-                                   title="View Details">
-                                    <i class="bi bi-eye-fill"></i>
-                                </a>
-                                
-                                <!-- Edit Button -->
-                                <a href="<?= base_url('admin/judges/edit/' . $judge['id']) ?>" 
-                                   class="btn btn-sm action-btn btn-edit"
-                                   title="Edit">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </a>
-                                
-                                <!-- Delete Button -->
-                                <button 
-                                    onclick="confirmDelete(<?= $judge['id'] ?>, '<?= esc($judge['username']) ?>')"
-                                    class="btn btn-sm action-btn btn-delete"
-                                    title="Delete">
-                                    <i class="bi bi-trash-fill"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
-
 <!-- Summary Card -->
 <?php if (!empty($judges)): ?>
-    <div class="mt-3">
-        <div class="card">
+    <div class="mt-3 mb-3">
+        <div class="card summary-stats">
             <div class="card-body">
                 <div class="row text-center">
                     <div class="col-md-4">
@@ -200,6 +125,71 @@
         </div>
     </div>
 <?php endif; ?>
+
+<!-- Judges Table -->
+<div class="judges-table">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($judges)): ?>
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
+                            <p class="text-muted mt-3">No judges found. Click "Add New Judge" to create one.</p>
+                        </td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($judges as $index => $judge): ?>
+                        <tr>
+                            <td><?= $index + 1 ?></td>
+                            <td><?= esc($judge['full_name']) ?></td>
+                            <td><i class="bi bi-envelope"></i> <?= esc($judge['email']) ?></td>
+                            <td>
+                                <span class="status-badge status-<?= $judge['status'] ?>">
+                                    <?= ucfirst($judge['status']) ?>
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <!-- View Button -->
+                                <a href="<?= base_url('admin/judges/view/' . $judge['id']) ?>" 
+                                   class="btn btn-sm action-btn btn-view"
+                                   title="View Details">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                
+                                <!-- Edit Button -->
+                                <a href="<?= base_url('admin/judges/edit/' . $judge['id']) ?>" 
+                                   class="btn btn-sm action-btn btn-edit"
+                                   title="Edit">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                
+                                <!-- Delete Button -->
+                                <button 
+                                    onclick="confirmDelete(<?= $judge['id'] ?>, '<?= esc($judge['email']) ?>')"
+                                    class="btn btn-sm action-btn btn-delete"
+                                    title="Delete">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Summary Card moved to top -->
 
 <?= $this->endSection() ?>
 

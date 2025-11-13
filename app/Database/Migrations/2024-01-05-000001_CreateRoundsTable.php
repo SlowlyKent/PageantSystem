@@ -12,6 +12,11 @@ class CreateRoundsTable extends Migration
 {
     public function up()
     {
+        // Check if table already exists
+        if ($this->db->tableExists('rounds')) {
+            return;
+        }
+        
         $this->forge->addField([
             'id' => [
                 'type'           => 'INT',
@@ -42,8 +47,8 @@ class CreateRoundsTable extends Migration
             ],
             'status' => [
                 'type'       => 'ENUM',
-                'constraint' => ['active', 'inactive', 'completed'],
-                'default'    => 'active',
+                'constraint' => ['pending', 'active', 'completed'],
+                'default'    => 'pending',
             ],
             'created_at' => [
                 'type' => 'DATETIME',

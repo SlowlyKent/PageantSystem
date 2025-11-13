@@ -48,19 +48,20 @@
 </div>
 
 <?php if (empty($rankings)): ?>
-    <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> No completed rounds with scores yet.
+    <div class="alert alert-info mb-4">
+        <h5 class="alert-heading mb-0"><i class="bi bi-info-circle"></i> No completed rounds with scores yet.</h5>
     </div>
 <?php else: ?>
     <!-- Winner Spotlight -->
     <?php if (isset($rankings[0])): ?>
         <div class="winner-card mb-5">
-            <div class="winner-trophy">🏆</div>
-            <h2 class="mt-3">Overall Winner</h2>
+            <div class="winner-trophy">👑</div>
+            <h2 class="mt-3">Winner</h2>
             <h1 class="display-4"><?= esc($rankings[0]['contestant_name']) ?></h1>
             <p class="fs-5">Contestant #<?= $rankings[0]['contestant_number'] ?></p>
             <h2 class="mt-3">Average Score: <?= number_format($rankings[0]['total_score'], 2) ?></h2>
-            <p class="mb-0">Completed <?= $rankings[0]['rounds_completed'] ?> round(s)</p>
+            <?php if (!empty($rankings[0]['rounds_completed'])): ?>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
     
@@ -77,10 +78,8 @@
                             <th width="10%" class="text-center">Rank</th>
                             <th width="10%">Photo</th>
                             <th width="15%">Contestant #</th>
-                            <th width="30%">Name</th>
-                            <th width="15%" class="text-center">Average Score</th>
-                            <th width="10%" class="text-center">Rounds</th>
-                            <th width="10%" class="text-center">Medal</th>
+                            <th width="35%">Name</th>
+                            <th width="20%" class="text-center">Average Score</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -124,54 +123,10 @@
                                         <?= number_format($ranking['total_score'], 2) ?>
                                     </span>
                                 </td>
-                                <td class="text-center">
-                                    <span class="badge bg-info"><?= $ranking['rounds_completed'] ?></span>
-                                </td>
-                                <td class="text-center">
-                                    <?php if ($ranking['rank'] == 1): ?>
-                                        <span style="font-size: 32px;">🥇</span>
-                                    <?php elseif ($ranking['rank'] == 2): ?>
-                                        <span style="font-size: 32px;">🥈</span>
-                                    <?php elseif ($ranking['rank'] == 3): ?>
-                                        <span style="font-size: 32px;">🥉</span>
-                                    <?php else: ?>
-                                        <span class="text-muted">-</span>
-                                    <?php endif; ?>
-                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Statistics -->
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="text-primary"><?= count($rankings) ?></h3>
-                    <p class="text-muted mb-0">Total Contestants</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="text-success"><?= $total_rounds ?></h3>
-                    <p class="text-muted mb-0">Completed Rounds</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3 class="text-warning">
-                        <?= isset($rankings[0]) ? number_format($rankings[0]['total_score'], 2) : '0.00' ?>
-                    </h3>
-                    <p class="text-muted mb-0">Highest Average Score</p>
-                </div>
             </div>
         </div>
     </div>

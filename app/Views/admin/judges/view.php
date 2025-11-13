@@ -2,28 +2,66 @@
 
 <?= $this->section('title') ?>Judge Details<?= $this->endSection() ?>
 
+<?= $this->section('styles') ?>
+<style>
+  /* Make this page use full width */
+  main.container { max-width: 100% !important; }
+
+  @media print {
+    .no-print,
+    .sidebar,
+    header,
+    nav {
+      display: none !important;
+    }
+
+    body { background: #ffffff; }
+    .container-fluid,
+    .container {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .card {
+      box-shadow: none !important;
+      border: 1px solid #d1d5db !important;
+      page-break-inside: avoid;
+    }
+
+    .card-header {
+      background: #f1f5f9 !important;
+      color: #0f172a !important;
+    }
+
+    @page { margin: 15mm; }
+  }
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
-<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom d-print-none">
     <div>
         <h1 class="h2"><i class="bi bi-eye-fill"></i> Judge Details</h1>
         <p class="text-muted">View judge account information</p>
     </div>
-    <div class="d-flex gap-2">
-        <a href="<?= base_url('admin/judges/edit/' . $judge['id']) ?>" class="btn btn-warning">
-            <i class="bi bi-pencil-fill"></i> Edit
-        </a>
+    <div class="d-flex gap-2 no-print">
         <a href="<?= base_url('admin/judges') ?>" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i> Back to List
         </a>
+        <button type="button" class="btn btn-outline-primary" onclick="window.print()">
+            <i class="bi bi-printer"></i> Print Profile
+        </button>
     </div>
 </div>
 
 <!-- Judge Information Card -->
 <div class="row">
-    <div class="col-lg-8">
-        <div class="card shadow-sm mb-3">
+    <div class="col-12">
+        <div class="card shadow-sm mb-3 d-print-none">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0"><i class="bi bi-person-circle"></i> Account Information</h5>
             </div>
@@ -31,13 +69,6 @@
                 <div class="row mb-3">
                     <div class="col-md-4"><strong><i class="bi bi-hash"></i> ID:</strong></div>
                     <div class="col-md-8"><?= esc($judge['id']) ?></div>
-                </div>
-                
-                <div class="row mb-3">
-                    <div class="col-md-4"><strong><i class="bi bi-person-circle"></i> Username:</strong></div>
-                    <div class="col-md-8">
-                        <span class="badge bg-secondary"><?= esc($judge['username']) ?></span>
-                    </div>
                 </div>
                 
                 <div class="row mb-3">
@@ -90,73 +121,52 @@
             </div>
         </div>
     </div>
-    
-    <!-- Quick Actions Card -->
-    <div class="col-lg-4">
-        <div class="card shadow-sm mb-3">
-            <div class="card-header bg-secondary text-white">
-                <h5 class="mb-0"><i class="bi bi-lightning-fill"></i> Quick Actions</h5>
+</div>
+
+<!-- Judge Profile Card -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light d-flex align-items-center gap-2">
+                <i class="bi bi-award-fill text-primary"></i>
+                <h5 class="mb-0">Judge Introduction Profile</h5>
             </div>
             <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="<?= base_url('admin/judges/edit/' . $judge['id']) ?>" 
-                       class="btn btn-warning">
-                        <i class="bi bi-pencil-fill"></i> Edit Judge
-                    </a>
-                    
-                    <button 
-                        onclick="confirmDelete(<?= $judge['id'] ?>, '<?= esc($judge['username']) ?>')"
-                        class="btn btn-danger">
-                        <i class="bi bi-trash-fill"></i> Delete Judge
-                    </button>
-                    
-                    <?php if ($judge['status'] === 'active'): ?>
-                        <a href="<?= base_url('admin/judges/edit/' . $judge['id']) ?>" 
-                           class="btn btn-secondary">
-                            <i class="bi bi-ban"></i> Deactivate Account
-                        </a>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted text-uppercase">Professional Title / Expertise</h6>
+                        <p class="mb-0"><?= esc($judge['judge_title'] ?? 'Not specified') ?></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted text-uppercase">Organization / Affiliation</h6>
+                        <p class="mb-0"><?= esc($judge['judge_organization'] ?? 'Not specified') ?></p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="text-muted text-uppercase">Notable Achievements &amp; Awards</h6>
+                    <?php if (!empty($judge['judge_achievements'])): ?>
+                        <div class="p-3 rounded bg-light border">
+                            <?= nl2br(esc($judge['judge_achievements'])) ?>
+                        </div>
                     <?php else: ?>
-                        <a href="<?= base_url('admin/judges/edit/' . $judge['id']) ?>" 
-                           class="btn btn-success">
-                            <i class="bi bi-check-circle"></i> Activate Account
-                        </a>
+                        <p class="text-muted fst-italic">No achievements provided.</p>
                     <?php endif; ?>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Stats Card -->
-        <div class="card shadow-sm bg-light">
-            <div class="card-body text-center">
-                <i class="bi bi-star-fill text-warning" style="font-size: 48px;"></i>
-                <h6 class="mt-3 mb-1">Judge Account</h6>
-                <p class="text-muted small mb-0">
-                    Can view contestants and submit scores during pageant events
-                </p>
+
+                <div>
+                    <h6 class="text-muted text-uppercase">Brief Biography</h6>
+                    <?php if (!empty($judge['judge_biography'])): ?>
+                        <div class="p-3 rounded bg-light border">
+                            <?= nl2br(esc($judge['judge_biography'])) ?>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-muted fst-italic">No biography provided.</p>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<?= $this->endSection() ?>
-
-<?= $this->section('scripts') ?>
-<script>
-function confirmDelete(judgeId, username) {
-    if (confirm(`Are you sure you want to delete judge "${username}"?\n\nThis action cannot be undone.`)) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '<?= base_url('admin/judges/delete/') ?>' + judgeId;
-        
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '<?= csrf_token() ?>';
-        csrfInput.value = '<?= csrf_hash() ?>';
-        form.appendChild(csrfInput);
-        
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-</script>
 <?= $this->endSection() ?>

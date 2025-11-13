@@ -283,11 +283,6 @@
     <div class="login-wrapper">
         <!-- LEFT SIDE - Brand & Features -->
         <div class="brand-side">
-            <!-- Logo -->
-            <div class="brand-logo">
-                <i class="bi bi-gem"></i>
-                <span>Rimmc Palaro</span>
-            </div>
             
             <!-- Heading -->
             <div class="brand-heading">

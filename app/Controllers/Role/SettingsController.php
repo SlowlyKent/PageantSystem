@@ -48,32 +48,46 @@ class SettingsController extends BaseController
     {
         // Get form data
         $systemName = $this->request->getPost('system_name');
+        $titleFont = $this->request->getPost('title_font');
 
-        // Update system name
+        // Update system name and title font
         $this->settingsModel->setSetting('system_name', $systemName);
+        $this->settingsModel->setSetting('title_font', $titleFont);
 
         // Handle logo upload
         $logo = $this->request->getFile('logo');
-        
+
         if ($logo && $logo->isValid() && !$logo->hasMoved()) {
-            // Validate file type
-            if (in_array($logo->getExtension(), ['jpg', 'jpeg', 'png', 'gif'])) {
-                // Generate unique name
-                $newName = 'logo_' . time() . '.' . $logo->getExtension();
-                
-                // Move to public/uploads/settings folder
-                $logo->move(FCPATH . 'uploads/settings', $newName);
-                
-                // Save filename to database
-                $this->settingsModel->setSetting('logo', $newName);
-                
-                // Delete old logo (optional)
-                $oldLogo = $this->settingsModel->getSetting('logo');
-                if ($oldLogo && file_exists(FCPATH . 'uploads/settings/' . $oldLogo)) {
-                    @unlink(FCPATH . 'uploads/settings/' . $oldLogo);
-                }
-            } else {
+            // Ensure upload directory exists
+            $uploadDir = FCPATH . 'uploads/settings';
+            if (!is_dir($uploadDir)) {
+                @mkdir($uploadDir, 0775, true);
+            }
+
+            // Validate file type and size (<= 2MB)
+            $ext = strtolower($logo->getExtension());
+            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+            if (!in_array($ext, $allowed)) {
                 return redirect()->back()->with('error', 'Invalid file type. Only JPG, PNG, and GIF are allowed.');
+            }
+            if ($logo->getSize() > 2 * 1024 * 1024) {
+                return redirect()->back()->with('error', 'File too large. Max allowed size is 2MB.');
+            }
+
+            // Read old logo BEFORE saving new one
+            $oldLogo = $this->settingsModel->getSetting('logo');
+
+            // Generate unique name and move
+            $newName = 'logo_' . time() . '.' . $ext;
+            $logo->move($uploadDir, $newName);
+
+            // Save filename to database
+            $this->settingsModel->setSetting('logo', $newName);
+
+            // Delete old logo if it exists and is different from the new one
+            if ($oldLogo && $oldLogo !== $newName) {
+                $oldPath = $uploadDir . '/' . $oldLogo;
+                if (is_file($oldPath)) { @unlink($oldPath); }
             }
         }
 
@@ -91,23 +105,13 @@ class SettingsController extends BaseController
             'primary_color'     => $this->request->getPost('primary_color'),
             'accent_color'      => $this->request->getPost('accent_color'),
             'text_color'        => $this->request->getPost('text_color'),
-            'background_type'   => $this->request->getPost('background_type'),
-            'background_color'  => $this->request->getPost('background_color'),
+            'button_color'      => $this->request->getPost('button_color') ?: $this->request->getPost('primary_color'),
         ];
 
         // Update all theme settings
         $this->settingsModel->updateMultiple($themeData);
 
-        // Handle background image upload
-        $bgImage = $this->request->getFile('background_image');
-        
-        if ($bgImage && $bgImage->isValid() && !$bgImage->hasMoved()) {
-            if (in_array($bgImage->getExtension(), ['jpg', 'jpeg', 'png'])) {
-                $newName = 'bg_' . time() . '.' . $bgImage->getExtension();
-                $bgImage->move(FCPATH . 'uploads/settings', $newName);
-                $this->settingsModel->setSetting('background_image', $newName);
-            }
-        }
+        // Background image feature removed – no file handling
 
         return redirect()->to('/admin/settings')->with('success', 'Theme settings updated successfully!');
     }
@@ -126,21 +130,25 @@ class SettingsController extends BaseController
                 'primary_color' => '#667eea',
                 'accent_color'  => '#764ba2',
                 'text_color'    => '#333333',
+                'button_color'  => '#667eea',
             ],
             'modern' => [
                 'primary_color' => '#6366f1',
                 'accent_color'  => '#ec4899',
                 'text_color'    => '#1f2937',
+                'button_color'  => '#6366f1',
             ],
             'youthful' => [
                 'primary_color' => '#f59e0b',
                 'accent_color'  => '#10b981',
                 'text_color'    => '#374151',
+                'button_color'  => '#f59e0b',
             ],
             'elegant' => [
                 'primary_color' => '#8b5cf6',
                 'accent_color'  => '#d946ef',
                 'text_color'    => '#1e293b',
+                'button_color'  => '#8b5cf6',
             ],
         ];
 

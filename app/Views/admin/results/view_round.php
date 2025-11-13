@@ -58,7 +58,25 @@
 
 <?php if (empty($rankings)): ?>
     <div class="alert alert-info">
-        <i class="bi bi-info-circle"></i> No scores submitted for this round yet.
+        <h5 class="alert-heading"><i class="bi bi-info-circle"></i> No scores submitted for this round yet.</h5>
+        <hr>
+        <p class="mb-2"><strong>To see rankings here, the following needs to happen:</strong></p>
+        <ol class="mb-2">
+            <li>Round must have status = "<strong>active</strong>" (activate it in <a href="<?= base_url('admin/rounds-criteria') ?>" class="alert-link">Rounds & Criteria Management</a>)</li>
+            <li>Judges must be assigned to this round</li>
+            <li>Judges need to score contestants through their Judge Panel</li>
+        </ol>
+        
+        <?php if (isset($total_judges) && isset($completed_judges)): ?>
+        <div class="mt-3">
+            <p class="mb-1"><strong>Current Status:</strong></p>
+            <ul class="mb-0">
+                <li>Round Status: <span class="badge bg-<?= $round['status'] == 'active' ? 'success' : ($round['status'] == 'completed' ? 'primary' : 'warning') ?>"><?= ucfirst($round['status']) ?></span></li>
+                <li>Judges Assigned: <strong><?= $total_judges ?></strong></li>
+                <li>Judges Completed: <strong><?= $completed_judges ?> / <?= $total_judges ?></strong></li>
+            </ul>
+        </div>
+        <?php endif; ?>
     </div>
 <?php else: ?>
     <!-- Top 3 Podium -->
@@ -107,11 +125,10 @@
                 <table class="table ranking-table table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th width="10%" class="text-center">Rank</th>
-                            <th width="15%">Contestant #</th>
-                            <th width="35%">Name</th>
+                            <th width="12%" class="text-center">Rank</th>
+                            <th width="18%">Contestant #</th>
+                            <th width="40%">Name</th>
                             <th width="20%" class="text-center">Average Score</th>
-                            <th width="10%" class="text-center">Judges</th>
                             <th width="10%" class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -120,11 +137,11 @@
                             <tr>
                                 <td class="text-center">
                                     <?php if ($ranking['rank'] == 1): ?>
-                                        <span class="badge bg-warning text-dark fs-5">🥇 <?= $ranking['rank'] ?></span>
+                                        <span class="badge bg-warning text-dark fs-5"><i class="bi bi-trophy-fill"></i> <?= $ranking['rank'] ?></span>
                                     <?php elseif ($ranking['rank'] == 2): ?>
-                                        <span class="badge bg-secondary fs-5">🥈 <?= $ranking['rank'] ?></span>
+                                        <span class="badge bg-secondary fs-5"><i class="bi bi-trophy"></i> <?= $ranking['rank'] ?></span>
                                     <?php elseif ($ranking['rank'] == 3): ?>
-                                        <span class="badge bg-info fs-5">🥉 <?= $ranking['rank'] ?></span>
+                                        <span class="badge bg-info fs-5"><i class="bi bi-award-fill"></i> <?= $ranking['rank'] ?></span>
                                     <?php else: ?>
                                         <span class="badge bg-light text-dark fs-5"><?= $ranking['rank'] ?></span>
                                     <?php endif; ?>
@@ -135,9 +152,6 @@
                                     <span class="badge bg-primary fs-6">
                                         <?= number_format($ranking['total_score'], 2) ?>
                                     </span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge bg-info"><?= $ranking['judge_count'] ?></span>
                                 </td>
                                 <td class="text-center">
                                     <a href="<?= base_url("admin/results/contestant/{$round['id']}/{$ranking['contestant_id']}") ?>" 

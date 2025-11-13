@@ -124,7 +124,7 @@
 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
     <div>
         <h1 class="h2"><i class="bi bi-plus-circle-fill"></i> Add New Round</h1>
-        <p class="text-muted">Create a round with 1 or 2 segments and their judging criteria</p>
+        <p class="text-muted">Create a round and define its judging criteria (no segments)</p>
     </div>
     <a href="<?= base_url('admin/rounds-criteria') ?>" class="btn btn-secondary">
         <i class="bi bi-arrow-left"></i> Back to List
@@ -144,170 +144,140 @@
 <form action="<?= base_url('admin/rounds-criteria/store') ?>" method="post" id="roundForm">
     <?= csrf_field() ?>
     
-    <!-- Round Information -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0"><i class="bi bi-info-circle-fill"></i> Round Information</h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3 mb-3">
-                    <label for="round_number" class="form-label">
-                        Round Number <span class="text-danger">*</span>
-                    </label>
-                    <input 
-                        type="number" 
-                        class="form-control" 
-                        id="round_number" 
-                        name="round_number" 
-                        value="<?= $next_round_number ?>"
-                        required
-                        min="1"
-                    >
-                    <small class="text-muted">Auto-suggested</small>
+    <!-- Round Information & Elimination Settings Row -->
+    <div class="row mb-4">
+        <!-- Left: Round Information -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle-fill"></i> Round Information</h5>
                 </div>
-                
-                <div class="col-md-9 mb-3">
-                    <label for="round_name" class="form-label">
-                        Round Name <span class="text-danger">*</span>
-                    </label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        id="round_name" 
-                        name="round_name" 
-                        placeholder="e.g., Preliminary Round, Semi-Finals, Finals"
-                        required
-                    >
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="round_number" class="form-label">
+                            Round Number <span class="text-danger">*</span>
+                        </label>
+                        <input 
+                            type="number" 
+                            class="form-control" 
+                            id="round_number" 
+                            name="round_number" 
+                            value="<?= $next_round_number ?>"
+                            required
+                            min="1"
+                        >
+                        <small class="text-muted">Auto-suggested</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="round_name" class="form-label">
+                            Round Name <span class="text-danger">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="round_name" 
+                            name="round_name" 
+                            placeholder="e.g., Preliminary Round, Semi-Finals, Finals"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="round_description" class="form-label">Instructions</label>
+                        <textarea 
+                            class="form-control" 
+                            id="round_description" 
+                            name="round_description" 
+                            rows="3"
+                            placeholder="Guidelines visible to judges during scoring..."
+                        ></textarea>
+                    </div>
+                    
+                    <div class="mb-0">
+                        <label for="max_score" class="form-label">
+                            Round Max Score <span class="text-danger">*</span>
+                        </label>
+                        <input 
+                            type="number" 
+                            class="form-control" 
+                            id="max_score" 
+                            name="max_score" 
+                            placeholder="e.g., 100"
+                            value="100"
+                            min="1"
+                            step="0.01"
+                            required
+                        >
+                        <small class="text-muted">Total maximum score reference for the round</small>
+                    </div>
                 </div>
             </div>
-            
+        </div>
+        
+        <!-- Right: Elimination Settings -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0"><i class="bi bi-filter-circle-fill"></i> Elimination Settings</h5>
+        </div>
+        <div class="card-body">
             <div class="mb-3">
-                <label for="round_description" class="form-label">Description (Optional)</label>
-                <textarea 
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="is_elimination" name="is_elimination" value="1">
+                    <label class="form-check-label" for="is_elimination">
+                        <strong>Enable Elimination in This Round</strong>
+                    </label>
+                </div>
+                <small class="text-muted">If enabled, only top-ranked contestants will advance to the next round.</small>
+            </div>
+
+            <div id="elimination_quota_section" style="display: none;">
+                <label for="elimination_quota" class="form-label">
+                    Number of Contestants to Advance (Top N) <span class="text-danger">*</span>
+                </label>
+                <input 
+                    type="number" 
                     class="form-control" 
-                    id="round_description" 
-                    name="round_description" 
-                    rows="2"
-                    placeholder="Brief description of this round..."
-                ></textarea>
+                    id="elimination_quota" 
+                    name="elimination_quota" 
+                    min="1" 
+                    placeholder="e.g., 5, 10, 15"
+                >
+            </div>
+
+            <div class="mt-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="is_final" name="is_final" value="1">
+                    <label class="form-check-label" for="is_final">
+                        <strong>This is the Final Round</strong>
+                    </label>
+                </div>
+                <small class="text-muted">If checked, results will show Winner, 1st Runner-Up, and 2nd Runner-Up.</small>
+            </div>
+        </div>
             </div>
         </div>
     </div>
     
-    <!-- Segment Count Selection -->
+    <!-- Criteria Management -->
     <div class="card shadow-sm mb-4">
         <div class="card-header bg-info text-white">
-            <h5 class="mb-0"><i class="bi bi-ui-checks"></i> How Many Segments?</h5>
+            <h5 class="mb-0"><i class="bi bi-ui-checks"></i> Round Criteria</h5>
         </div>
         <div class="card-body">
-            <p class="text-muted">Some rounds have only 1 segment (e.g., Interview), while others have 2 segments (e.g., Evening Gown + Swimsuit)</p>
-            
-            <div class="segment-count-selector">
-                <label class="segment-option active" id="option-1-segment">
-                    <input type="radio" name="segment_count" value="1" checked>
-                    <div class="segment-icon">1️⃣</div>
-                    <h5>Single Segment</h5>
-                    <p class="text-muted mb-0">One judging segment<br>(100% weight)</p>
-                </label>
-                
-                <label class="segment-option" id="option-2-segments">
-                    <input type="radio" name="segment_count" value="2">
-                    <div class="segment-icon">1️⃣2️⃣</div>
-                    <h5>Two Segments</h5>
-                    <p class="text-muted mb-0">Two judging segments<br>(50% weight each)</p>
-                </label>
+            <p class="text-muted">Add one or more criteria for this round. The total weight must equal 100%.</p>
+            <div id="criteria-container"></div>
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mt-3">
+                <div>
+                    <span class="percentage-badge percentage-ok" id="criteria-total">0%</span>
+                    <small class="text-muted ms-2">Total Weight</small>
+                </div>
+                <button type="button" class="add-criteria-btn" id="addCriteriaBtn" onclick="addCriteriaRow()">
+                    <i class="bi bi-plus-circle"></i> Add Criteria
+                </button>
             </div>
         </div>
-    </div>
-    
-    <!-- Segment 1 -->
-    <div class="segment-section" id="segment1-section">
-        <div class="segment-header">
-            <h4 class="mb-0"><i class="bi bi-1-circle-fill"></i> Segment 1</h4>
-            <span class="badge bg-light text-dark">Weight: <span id="segment1-weight">100</span>%</span>
-        </div>
-        
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label">
-                    Segment Name <span class="text-danger">*</span>
-                </label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    name="segment1_name" 
-                    placeholder="e.g., Evening Gown, Talent, Interview"
-                    required
-                >
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Description (Optional)</label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    name="segment1_description" 
-                    placeholder="Brief description..."
-                >
-            </div>
-        </div>
-        
-        <h6 class="mb-3">
-            <i class="bi bi-list-check"></i> Judging Criteria for Segment 1
-            <span class="percentage-badge percentage-ok ms-2" id="segment1-total">0%</span>
-        </h6>
-        
-        <div id="segment1-criteria-container">
-            <!-- Criteria rows will be added here -->
-        </div>
-        
-        <button type="button" class="add-criteria-btn" onclick="addCriteria(1)">
-            <i class="bi bi-plus-circle"></i> Add Criteria
-        </button>
-    </div>
-    
-    <!-- Segment 2 (Hidden by default) -->
-    <div class="segment-section" id="segment2-section" style="display: none;">
-        <div class="segment-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-            <h4 class="mb-0"><i class="bi bi-2-circle-fill"></i> Segment 2</h4>
-            <span class="badge bg-light text-dark">Weight: 50%</span>
-        </div>
-        
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label">
-                    Segment Name <span class="text-danger">*</span>
-                </label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    name="segment2_name" 
-                    placeholder="e.g., Swimsuit, Q&A"
-                >
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Description (Optional)</label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    name="segment2_description" 
-                    placeholder="Brief description..."
-                >
-            </div>
-        </div>
-        
-        <h6 class="mb-3">
-            <i class="bi bi-list-check"></i> Judging Criteria for Segment 2
-            <span class="percentage-badge percentage-ok ms-2" id="segment2-total">0%</span>
-        </h6>
-        
-        <div id="segment2-criteria-container">
-            <!-- Criteria rows will be added here -->
-        </div>
-        
-        <button type="button" class="add-criteria-btn" onclick="addCriteria(2)">
-            <i class="bi bi-plus-circle"></i> Add Criteria
-        </button>
     </div>
     
     <!-- Submit Buttons -->
@@ -321,9 +291,7 @@
                     <i class="bi bi-x-circle"></i> Cancel
                 </a>
             </div>
-            <small class="text-muted d-block mt-2">
-                💡 Tip: Make sure criteria percentages for each segment add up to 100%
-            </small>
+            <small class="text-muted d-block mt-2">💡 Tip: Make sure criteria weights add up to 100%</small>
         </div>
     </div>
 </form>
@@ -332,123 +300,68 @@
 
 <?= $this->section('scripts') ?>
 <script>
-let criteriaCounters = { 1: 0, 2: 0 };
+let criteriaCounter = 0;
+let addCriteriaBtn;
 
-// Segment count selection
-document.querySelectorAll('input[name="segment_count"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-        const segmentCount = parseInt(this.value);
-        
-        // Update UI
-        document.querySelectorAll('.segment-option').forEach(opt => opt.classList.remove('active'));
-        this.closest('.segment-option').classList.add('active');
-        
-        // Show/hide segment 2
-        const segment2Section = document.getElementById('segment2-section');
-        const segment2NameInput = document.querySelector('input[name="segment2_name"]');
-        
-        if (segmentCount === 2) {
-            segment2Section.style.display = 'block';
-            segment2NameInput.required = true;
-            document.getElementById('segment1-weight').textContent = '50';
-        } else {
-            segment2Section.style.display = 'none';
-            segment2NameInput.required = false;
-            document.getElementById('segment1-weight').textContent = '100';
-        }
-    });
-});
+function getCriteriaTotal() {
+    const inputs = document.querySelectorAll('input[name="criteria_percentage[]"]');
+    let total = 0;
+    inputs.forEach(input => total += parseFloat(input.value) || 0);
+    return total;
+}
 
-// Add criteria row
-function addCriteria(segmentNum) {
-    criteriaCounters[segmentNum]++;
-    const index = criteriaCounters[segmentNum];
-    const container = document.getElementById(`segment${segmentNum}-criteria-container`);
-    
+function addCriteriaRow() {
+    const currentTotal = getCriteriaTotal();
+    if (currentTotal >= 99.99) {
+        alert('The total weight is already 100%. Adjust existing weights before adding more criteria.');
+        return;
+    }
+
+    const container = document.getElementById('criteria-container');
     const row = document.createElement('div');
     row.className = 'criteria-row';
-    row.id = `segment${segmentNum}-criteria-${index}`;
+    const index = ++criteriaCounter;
+    row.id = `criteria-${index}`;
     row.innerHTML = `
-        <button type="button" class="btn btn-sm btn-danger remove-criteria-btn" onclick="removeCriteria(${segmentNum}, ${index})">
+        <button type="button" class="btn btn-sm btn-danger remove-criteria-btn" onclick="removeCriteriaRow(${index})">
             <i class="bi bi-x-lg"></i>
         </button>
-        
         <div class="row">
-            <div class="col-md-4 mb-2">
+            <div class="col-md-5 mb-2">
                 <label class="form-label small">Criteria Name *</label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    name="segment${segmentNum}_criteria_name[]" 
-                    placeholder="e.g., Poise, Beauty, Stage Presence"
-                    required
-                >
+                <input type="text" class="form-control" name="criteria_name[]" required placeholder="e.g., Stage Presence">
             </div>
-            <div class="col-md-3 mb-2">
-                <label class="form-label small">Percentage (%) *</label>
-                <input 
-                    type="number" 
-                    class="form-control criteria-percentage" 
-                    name="segment${segmentNum}_criteria_percentage[]" 
-                    placeholder="e.g., 25"
-                    min="0"
-                    max="100"
-                    step="0.01"
-                    data-segment="${segmentNum}"
-                    required
-                    onchange="updatePercentageTotal(${segmentNum})"
-                >
+            <div class="col-md-2 mb-2">
+                <label class="form-label small">Weight (%) *</label>
+                <input type="number" class="form-control" name="criteria_percentage[]" min="0" max="100" step="0.01" required oninput="updateCriteriaTotal()">
             </div>
             <div class="col-md-2 mb-2">
                 <label class="form-label small">Max Score *</label>
-                <input 
-                    type="number" 
-                    class="form-control" 
-                    name="segment${segmentNum}_criteria_max_score[]" 
-                    value="100"
-                    required
-                >
+                <input type="number" class="form-control" name="criteria_max_score[]" min="1" step="1" required placeholder="e.g., 50">
             </div>
             <div class="col-md-3 mb-2">
                 <label class="form-label small">Description</label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    name="segment${segmentNum}_criteria_description[]" 
-                    placeholder="Optional"
-                >
+                <input type="text" class="form-control" name="criteria_description[]" placeholder="Optional">
             </div>
         </div>
     `;
-    
     container.appendChild(row);
-    updatePercentageTotal(segmentNum);
+    updateCriteriaTotal();
 }
 
-// Remove criteria row
-function removeCriteria(segmentNum, index) {
-    const row = document.getElementById(`segment${segmentNum}-criteria-${index}`);
+function removeCriteriaRow(index) {
+    const row = document.getElementById(`criteria-${index}`);
     if (row) {
         row.remove();
-        updatePercentageTotal(segmentNum);
+        updateCriteriaTotal();
     }
 }
 
-// Update percentage total
-function updatePercentageTotal(segmentNum) {
-    const inputs = document.querySelectorAll(`input.criteria-percentage[data-segment="${segmentNum}"]`);
-    let total = 0;
-    
-    inputs.forEach(input => {
-        const value = parseFloat(input.value) || 0;
-        total += value;
-    });
-    
-    const badge = document.getElementById(`segment${segmentNum}-total`);
+function updateCriteriaTotal() {
+    const total = getCriteriaTotal();
+    const badge = document.getElementById('criteria-total');
     badge.textContent = total.toFixed(2) + '%';
-    
-    // Update badge color
-    badge.className = 'percentage-badge ms-2';
+    badge.className = 'percentage-badge';
     if (Math.abs(total - 100) < 0.01) {
         badge.classList.add('percentage-ok');
     } else if (total < 100) {
@@ -456,33 +369,43 @@ function updatePercentageTotal(segmentNum) {
     } else {
         badge.classList.add('percentage-error');
     }
+
+    if (addCriteriaBtn) {
+        addCriteriaBtn.disabled = total >= 99.99;
+    }
 }
 
-// Initialize with one criteria for segment 1
-window.addEventListener('DOMContentLoaded', function() {
-    addCriteria(1);
+// Initialize with one criteria
+window.addEventListener('DOMContentLoaded', () => {
+    addCriteriaBtn = document.getElementById('addCriteriaBtn');
+    addCriteriaRow();
+});
+
+// Toggle elimination quota field
+document.getElementById('is_elimination').addEventListener('change', function() {
+    const quotaSection = document.getElementById('elimination_quota_section');
+    quotaSection.style.display = this.checked ? 'block' : 'none';
+    if (this.checked) {
+        document.getElementById('elimination_quota').setAttribute('required', 'required');
+    } else {
+        document.getElementById('elimination_quota').removeAttribute('required');
+    }
 });
 
 // Form validation before submit
 document.getElementById('roundForm').addEventListener('submit', function(e) {
-    const segmentCount = parseInt(document.querySelector('input[name="segment_count"]:checked').value);
-    
-    // Check segment 1
-    const segment1Total = parseFloat(document.getElementById('segment1-total').textContent);
-    if (Math.abs(segment1Total - 100) > 0.01) {
+    const criteriaRows = document.querySelectorAll('#criteria-container .criteria-row');
+    if (criteriaRows.length === 0) {
         e.preventDefault();
-        alert('Segment 1 criteria percentages must add up to 100%! Current total: ' + segment1Total + '%');
+        alert('Please add at least one criteria!');
         return false;
     }
-    
-    // Check segment 2 if applicable
-    if (segmentCount === 2) {
-        const segment2Total = parseFloat(document.getElementById('segment2-total').textContent);
-        if (Math.abs(segment2Total - 100) > 0.01) {
-            e.preventDefault();
-            alert('Segment 2 criteria percentages must add up to 100%! Current total: ' + segment2Total + '%');
-            return false;
-        }
+    const total = Array.from(document.querySelectorAll('input[name="criteria_percentage[]"]'))
+        .reduce((sum, el) => sum + (parseFloat(el.value) || 0), 0);
+    if (Math.abs(total - 100) > 0.01) {
+        e.preventDefault();
+        alert(`Criteria weights must add up to 100%! Current total: ${total.toFixed(2)}%`);
+        return false;
     }
 });
 </script>

@@ -41,27 +41,32 @@
 <!-- Form Card -->
 <div class="card shadow-sm">
     <div class="card-body p-4">
-        <form action="<?= base_url('admin/judges/store') ?>" method="post">
+        <form action="<?= base_url('admin/judges/store') ?>" method="post" autocomplete="off">
             <?= csrf_field() ?>
+
+            <!-- Decoy fields to defeat browser autofill -->
+            <input type="text" name="fake_email" autocomplete="username" tabindex="-1" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;">
+            <input type="password" name="fake_password" autocomplete="new-password" tabindex="-1" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;">
             
             <div class="row">
-                <!-- Username -->
-                <div class="col-md-6 mb-3">
-                    <label for="username" class="form-label">
-                        <i class="bi bi-person-circle"></i> Username <span class="text-danger">*</span>
+                <!-- Full Name -->
+                <div class="col-12 mb-3">
+                    <label for="full_name" class="form-label">
+                        <i class="bi bi-person-fill"></i> Full Name <span class="text-danger">*</span>
                     </label>
                     <input 
                         type="text" 
                         class="form-control" 
-                        id="username" 
-                        name="username" 
-                        value="<?= old('username') ?>"
+                        id="full_name" 
+                        name="full_name" 
+                        value="<?= old('full_name') ?>"
                         required
-                        placeholder="Enter username"
+                        placeholder="Enter full name"
                     >
-                    <small class="text-muted">Used for login. Must be unique.</small>
                 </div>
-                
+            </div>
+            
+            <div class="row">
                 <!-- Email -->
                 <div class="col-md-6 mb-3">
                     <label for="email" class="form-label">
@@ -74,28 +79,10 @@
                         name="email" 
                         value="<?= old('email') ?>"
                         required
-                        placeholder="judge@example.com"
+                        placeholder="Enter Email Address"
+                        autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"
+                        inputmode="email"
                     >
-                    <small class="text-muted">Must be a valid email address.</small>
-                </div>
-            </div>
-            
-            <div class="row">
-                <!-- Full Name -->
-                <div class="col-md-6 mb-3">
-                    <label for="full_name" class="form-label">
-                        <i class="bi bi-person-fill"></i> Full Name <span class="text-danger">*</span>
-                    </label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        id="full_name" 
-                        name="full_name" 
-                        value="<?= old('full_name') ?>"
-                        required
-                        placeholder="John Doe"
-                    >
-                    <small class="text-muted">Judge's complete name.</small>
                 </div>
                 
                 <!-- Password -->
@@ -111,7 +98,8 @@
                             name="password" 
                             required
                             minlength="6"
-                            placeholder="Minimum 6 characters"
+                            placeholder="Enter password"
+                            autocomplete="new-password"
                         >
                         <button 
                             class="btn btn-outline-secondary" 
@@ -122,7 +110,6 @@
                             <i class="bi bi-eye-fill" id="toggleIcon"></i>
                         </button>
                     </div>
-                    <small class="text-muted">Minimum 6 characters. Judge will use this to login.</small>
                 </div>
             </div>
             
@@ -135,9 +122,55 @@
                     <option value="active" selected>Active - Can login and score</option>
                     <option value="inactive">Inactive - Cannot login</option>
                 </select>
-                <small class="text-muted">Set to "Inactive" to temporarily disable the account.</small>
             </div>
-            
+
+            <hr class="my-4">
+
+            <h5 class="fw-bold mb-3"><i class="bi bi-award-fill"></i> Judge Introduction Profile</h5>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="judge_title" class="form-label">
+                        <i class="bi bi-briefcase-fill"></i> Professional Title / Expertise
+                    </label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="judge_title" 
+                        name="judge_title" 
+                        value="<?= old('judge_title') ?>"
+                        placeholder="e.g., International Fashion Designer"
+                    >
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="judge_organization" class="form-label">
+                        <i class="bi bi-building"></i> Organization / Affiliation
+                    </label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="judge_organization" 
+                        name="judge_organization" 
+                        value="<?= old('judge_organization') ?>"
+                        placeholder="e.g., Founder, Inspire Creative Studios"
+                    >
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="judge_achievements" class="form-label">
+                    <i class="bi bi-trophy-fill"></i> Notable Achievements & Awards
+                </label>
+                <textarea class="form-control" id="judge_achievements" name="judge_achievements" rows="3" placeholder="Highlight recognitions, awards, publications, or milestones. Use sentences or bullet-style phrases."><?= old('judge_achievements') ?></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="judge_biography" class="form-label">
+                    <i class="bi bi-journal-text"></i> Brief Biography
+                </label>
+                <textarea class="form-control" id="judge_biography" name="judge_biography" rows="3" placeholder="Share the judge's background, advocacies, and passions."><?= old('judge_biography') ?></textarea>
+            </div>
+
             <!-- Submit Buttons -->
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">
@@ -151,19 +184,6 @@
     </div>
 </div>
 
-<!-- Help Card -->
-<div class="card mt-3 bg-light">
-    <div class="card-body">
-        <h6 class="card-title"><i class="bi bi-info-circle-fill"></i> Tips</h6>
-        <ul class="mb-0 small">
-            <li>All fields marked with <span class="text-danger">*</span> are required.</li>
-            <li>Username and email must be unique (not used by other accounts).</li>
-            <li>Password will be securely hashed and stored.</li>
-            <li>Judge can login using username or email with their password.</li>
-            <li>You can edit judge information anytime from the judges list.</li>
-        </ul>
-    </div>
-</div>
 
 <?= $this->endSection() ?>
 
@@ -182,5 +202,14 @@ function togglePassword() {
         toggleIcon.className = 'bi bi-eye-fill';
     }
 }
+// Clear autofilled values on first load if no old input exists
+document.addEventListener('DOMContentLoaded', function() {
+    var hadOldEmail = '<?= old('email') ? '1' : '0' ?>' === '1';
+    var hadOldPwd   = '<?= old('password') ? '1' : '0' ?>' === '1';
+    var email = document.getElementById('email');
+    var pwd   = document.getElementById('password');
+    if (email && !hadOldEmail) { email.value = ''; }
+    if (pwd && !hadOldPwd)     { pwd.value   = ''; }
+});
 </script>
 <?= $this->endSection() ?>

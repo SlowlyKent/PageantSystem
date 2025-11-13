@@ -18,7 +18,12 @@ class UserModel extends Model
         'password',
         'full_name',
         'role_id',
-        'status'
+        'status',
+        'judge_title',
+        'judge_organization',
+        'judge_achievements',
+        'judge_biography',
+        'judge_intro_notes'
     ];
 
     // Dates
