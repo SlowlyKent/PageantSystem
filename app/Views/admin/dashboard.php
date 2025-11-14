@@ -88,49 +88,50 @@
 <?php endif; ?>
 
 <!-- Statistics (Enhanced Theme-Aware Cards) -->
-<div class="row g-4 mb-4">
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-box p-4 d-flex align-items-center gap-3">
-            <div class="icon-circle">
-                <i class="bi bi-people-fill"></i>
-            </div>
-            <div class="flex-grow-1">
-                <div class="value"><?= $total_contestants ?? 0 ?></div>
-                <div class="label">Total Contestants</div>
-            </div>
+<div class="stats-grid mb-4">
+    <div class="stat-card">
+        <div class="stat-icon icon-primary">
+            <i class="bi bi-people-fill"></i>
+        </div>
+        <div>
+            <p class="stat-label">Total Contestants</p>
+            <h2 class="stat-value"><?= $total_contestants ?? 0 ?></h2>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-box p-4 d-flex align-items-center gap-3">
-            <div class="icon-circle">
-                <i class="bi bi-person-badge-fill"></i>
-            </div>
-            <div class="flex-grow-1">
-                <div class="value"><?= $active_judges ?? 0 ?></div>
-                <div class="label">Active Judges</div>
-            </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-secondary">
+            <i class="bi bi-person-badge-fill"></i>
+        </div>
+        <div>
+            <p class="stat-label">Active Judges</p>
+            <h2 class="stat-value"><?= $active_judges ?? 0 ?></h2>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-box p-4 d-flex align-items-center gap-3">
-            <div class="icon-circle">
-                <i class="bi bi-trophy-fill"></i>
-            </div>
-            <div class="flex-grow-1">
-                <div class="value"><?= $total_rounds ?? 0 ?></div>
-                <div class="label">Total Rounds</div>
-            </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-tertiary">
+            <i class="bi bi-trophy-fill"></i>
+        </div>
+        <div>
+            <p class="stat-label">Total Rounds</p>
+            <h2 class="stat-value"><?= $total_rounds ?? 0 ?></h2>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-box p-4 d-flex align-items-center gap-3">
-            <div class="icon-circle">
-                <i class="bi bi-star-fill"></i>
-            </div>
-            <div class="flex-grow-1">
-                <div class="value"><?= $scores_submitted ?? 0 ?></div>
-                <div class="label">Scores Submitted</div>
-            </div>
+    <div class="stat-card">
+        <div class="stat-icon icon-quaternary">
+            <i class="bi bi-star-fill"></i>
+        </div>
+        <div>
+            <p class="stat-label">Scores Submitted</p>
+            <h2 class="stat-value"><?= $scores_submitted ?? 0 ?></h2>
+        </div>
+    </div>
+    <div class="stat-card accent-danger">
+        <div class="stat-icon icon-danger">
+            <i class="bi bi-person-x-fill"></i>
+        </div>
+        <div>
+            <p class="stat-label">Eliminated Contestants</p>
+            <h2 class="stat-value"><?= $eliminated_contestants ?? 0 ?></h2>
         </div>
     </div>
 </div>

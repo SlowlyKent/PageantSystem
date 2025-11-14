@@ -33,6 +33,13 @@ class AdminController extends BaseController
         $scoreModel = new ScoreModel();
         
         $totalContestants = $contestantModel->where('status', 'active')->countAllResults();
+        $db = \Config\Database::connect();
+        $eliminatedContestants = $db->table('round_contestants')
+            ->select('contestant_id')
+            ->where('state', 'eliminated')
+            ->groupBy('contestant_id')
+            ->get()
+            ->getNumRows();
         $activeJudges = $userModel->select('users.*')
                                    ->join('roles', 'roles.id = users.role_id')
                                    ->where('roles.name', 'judge')
@@ -62,7 +69,6 @@ class AdminController extends BaseController
             }, array_slice($rankings, 0, 5));
 
             // Get all active judges with their completion status for current round
-            $db = \Config\Database::connect();
             $judges_list = $db->table('users')
                 ->select('users.id, users.full_name, round_judges.completed_at, round_judges.judge_round_status')
                 ->join('roles', 'roles.id = users.role_id')
@@ -96,6 +102,7 @@ class AdminController extends BaseController
             'active_judges' => $activeJudges,
             'total_rounds' => $totalRounds,
             'scores_submitted' => $scoresSubmitted,
+            'eliminated_contestants' => $eliminatedContestants,
             'current_round' => $currentRound,
             'dashboard_leaderboard' => $dashboardLeaderboard,
             'judge_completion' => $judgeCompletion,
