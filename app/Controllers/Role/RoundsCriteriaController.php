@@ -400,7 +400,11 @@ class RoundsCriteriaController extends BaseController
         // Reset all judge completion timestamps for this round
         $db->table('round_judges')
             ->where('round_id', $id)
-            ->update(['completed_at' => null, 'updated_at' => date('Y-m-d H:i:s')]);
+            ->update([
+                'completed_at' => null,
+                'judge_round_status' => 'pending',
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
         
         // Also set round status back to active so judges can access it
         $this->roundModel->update($id, ['status' => 'active']);

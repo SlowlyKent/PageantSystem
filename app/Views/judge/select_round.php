@@ -28,8 +28,9 @@
             $isLocked = isset($round['is_locked']) && $round['is_locked'] == 1;
             $judgeCompleted = !empty($round['judge_completed']);
             $allJudgesCompleted = !empty($round['all_judges_completed']);
-            $showResults = ($roundStatus === 'completed') || !empty($round['all_judges_completed']);
+            $showResults = ($roundStatus === 'completed') || !empty($round['all_judges_completed']) || $judgeCompleted;
             $resultsUrl = $showResults ? base_url('judge/round-results/' . $round['id']) : null;
+            $rankingsUrl = null;
 
             $iconHtml = '<div class="round-status-icon neutral"><i class="bi bi-flag-fill"></i></div>';
             $cardClasses = 'round-selection-card';
@@ -54,8 +55,8 @@
             } elseif ($judgeCompleted) {
                 $iconHtml = '<div class="round-status-icon judge-completed"><i class="bi bi-person-check-fill"></i></div>';
                 $statusBadge = '<span class="badge bg-success mt-2"><i class="bi bi-check-circle"></i> You Completed</span>';
-                $actionUrl = base_url("judge/score-round/{$round['id']}");
-                $actionLabel = '<i class="bi bi-eye"></i> View Round';
+                $actionUrl = $resultsUrl ?: base_url("judge/round-results/{$round['id']}");
+                $actionLabel = '<i class="bi bi-bar-chart-line"></i> View Results';
                 $actionClass = 'btn-outline-primary';
                 $actionTextClass = 'text-primary';
                 if (!empty($round['total_judges']) && $round['completed_judges'] < $round['total_judges']) {
@@ -87,7 +88,7 @@
                         <?php if ($resultsUrl && (!$actionUrl || $resultsUrl !== $actionUrl)): ?>
                             <div class="d-grid mt-2">
                                 <a href="<?= $resultsUrl ?>" class="btn btn-secondary text-white">
-                                    <i class="bi bi-bar-chart-line"></i> View Rankings
+                                    <i class="bi bi-bar-chart-line"></i> View Results
                                 </a>
                             </div>
                         <?php endif; ?>

@@ -1974,6 +1974,60 @@ body.login-page .feature-card:hover {
         margin-top: 4px; 
         font-weight: 500;
       }
+
+.notification-wrapper {
+    position: relative;
+}
+
+.notification-bell {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.notification-bell i {
+    font-size: 1.2rem;
+}
+
+.notification-count {
+    position: absolute;
+    top: -4px;
+    right: -2px;
+    background: #dc3545;
+    color: #ffffff;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+}
+
+.notification-menu {
+    width: 320px;
+    max-height: 360px;
+    overflow-y: auto;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.notification-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 0.9rem;
+    white-space: normal;
+}
+
+.notification-item i {
+    font-size: 1rem;
+    margin-top: 4px;
+}
+
+.notification-item.notification-success i { color: #4caf50; }
+.notification-item.notification-warning i { color: #f59e0b; }
+.notification-item.notification-info i { color: #0d6efd; }
       
       /* Enhanced Section Cards - Theme Aware */
       .section-card {

@@ -117,15 +117,8 @@
     <?php endif; ?>
     <?php endif; ?>
     
-    <?php if ($current_judge_completed && !$all_judges_completed): ?>
-        <div class="alert alert-info mb-4">
-            <i class="bi bi-hourglass-split"></i>
-            You have completed scoring for this round. Waiting for other judges to finish (<?= $stats['judges_completed'] ?>/<?= $stats['total_judges'] ?> completed).
-        </div>
-    <?php endif; ?>
-    
     <!-- Instructions Section (Hide if final round and all judges completed) -->
-    <?php if (!($is_final_round && $all_judges_completed) && !empty($round['description'])): ?>
+    <?php if (!$current_judge_completed && !($is_final_round && $all_judges_completed) && !empty($round['description'])): ?>
         <div class="instructions-section">
             <h5><i class="bi bi-info-circle-fill"></i> Instructions</h5>
             <p class="mb-0"><?= nl2br(esc($round['description'])) ?></p>
@@ -133,7 +126,7 @@
     <?php endif; ?>
     
     <!-- Scoring Categories (Hide if final round and all judges completed) -->
-    <?php if (!($is_final_round && $all_judges_completed)): ?>
+    <?php if (!$current_judge_completed && !($is_final_round && $all_judges_completed)): ?>
     <div class="categories-section">
         <h5 class="fw-bold mb-0"><i class="bi bi-collection me-2"></i>Scoring Categories</h5>
         <div class="categories-grid mt-3">
@@ -153,9 +146,8 @@
     
     <?php endif; ?>
     
-    <!-- Success Message -->
     <!-- Contestants Scoring (Hide if final round and all judges completed) -->
-    <?php if (!($is_final_round && $all_judges_completed)): ?>
+    <?php if (!$current_judge_completed && !($is_final_round && $all_judges_completed)): ?>
     <form id="scoringForm" method="post" action="<?= base_url('judge/submit-all-scores') ?>">
         <?= csrf_field() ?>
         <input type="hidden" name="round_id" value="<?= $round['id'] ?>">
@@ -234,51 +226,12 @@
             </div>
         <?php endforeach; ?>
         
-        <!-- Complete Scoring / Next Round Button -->
         <div class="text-center mt-5 mb-4">
-            <?php if ($current_judge_completed): ?>
-                <!-- Judge has completed - show next round options -->
-                <hr class="my-4">
-                
-                <?php if ($next_round): ?>
-                    <?php if ($next_round_unlocked && $stats['total_judges'] > 0 && $stats['judges_completed'] == $stats['total_judges']): ?>
-                        <a href="<?= base_url('judge/score-round/' . $next_round['id']) ?>" class="next-round-btn btn btn-lg">
-                            <i class="bi bi-arrow-right-circle"></i> Proceed to Next Round
-                        </a>
-                    <?php else: ?>
-                        <button type="button" class="next-round-btn btn btn-lg" disabled>
-                            <i class="bi bi-lock-fill"></i> Next Round Locked
-                        </button>
-                        <div class="locked-message mt-3">
-                            <i class="bi bi-info-circle"></i>
-                            <strong>Waiting for other judges...</strong>
-                            <p class="mb-0 mt-2">The next round will unlock when all judges complete scoring this round. (<?= $stats['judges_completed'] ?>/<?= $stats['total_judges'] ?> completed)</p>
-                        </div>
-                    <?php endif; ?>
-                <?php else: ?>
-                    <!-- Final Round - Show View Winners Button if all judges completed -->
-                    <?php if ($all_judges_completed): ?>
-                        <button type="button" class="btn btn-warning btn-lg text-white view-winners-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
-                            <i class="bi bi-trophy-fill"></i> VIEW WINNERS
-                        </button>
-                        <p class="text-muted mt-3">All judges have completed! Click to view the Top 3 winners.</p>
-                    <?php else: ?>
-                        <!-- Waiting for other judges to complete final round -->
-                        <div class="alert alert-info mt-3">
-                            <i class="bi bi-hourglass-split"></i>
-                            <strong>Final Round Completed!</strong>
-                            <p class="mb-0 mt-2">You have completed your scoring for the final round. Please wait for other judges to finish. The winners will be displayed when all judges complete scoring. (<?= $stats['judges_completed'] ?>/<?= $stats['total_judges'] ?> completed)</p>
-                        </div>
-                    <?php endif; ?>
-                <?php endif; ?>
-            <?php else: ?>
-                <!-- Judge hasn't completed - show info message -->
                 <div class="alert alert-info mb-4">
                     <i class="bi bi-info-circle-fill"></i>
                     <strong>Review your scores above.</strong> When you're satisfied with all your ratings, scroll through all contestants and click the "Mark as Complete" button.
                 </div>
-                <p class="text-muted">Your scores are automatically saved as you adjust them. The completion button will appear when you've scrolled through all contestants.</p>
-            <?php endif; ?>
+            <p class="text-muted mb-0">Your scores are automatically saved as you adjust them. The completion button appears once you've reviewed all contestants.</p>
         </div>
     </form>
     <?php endif; ?>

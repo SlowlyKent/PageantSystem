@@ -90,6 +90,8 @@ class ResultsController extends BaseController
                            ->with('error', 'Round not found.');
         }
 
+        $this->roundModel->ensureJudgeAssignments($roundId);
+
         // Get rankings (will show any contestant who has scores in this round)
         $rankings = $this->scoreModel->getRoundRankings($roundId);
         
@@ -101,7 +103,7 @@ class ResultsController extends BaseController
         
         $completedJudges = $db->table('round_judges')
             ->where('round_id', $roundId)
-            ->where('completed_at IS NOT NULL', null, false)
+            ->where('judge_round_status', 'completed')
             ->countAllResults();
 
         $data = [

@@ -51,6 +51,8 @@ class AdminController extends BaseController
         $dashboardLeaderboard = [];
         $judgeCompletion = ['total' => 0, 'completed' => 0, 'percentage' => 0];
         if (!empty($currentRound)) {
+            $roundModel->ensureJudgeAssignments($currentRound['id']);
+
             $rankings = $scoreModel->getRoundRankings($currentRound['id']);
             $dashboardLeaderboard = array_map(function($row) {
                 return [
@@ -62,7 +64,7 @@ class AdminController extends BaseController
             // Get all active judges with their completion status for current round
             $db = \Config\Database::connect();
             $judges_list = $db->table('users')
-                ->select('users.id, users.full_name, round_judges.completed_at')
+                ->select('users.id, users.full_name, round_judges.completed_at, round_judges.judge_round_status')
                 ->join('roles', 'roles.id = users.role_id')
                 ->join('round_judges', 'round_judges.judge_id = users.id AND round_judges.round_id = ' . $currentRound['id'], 'left')
                 ->where('roles.name', 'judge')
@@ -75,7 +77,7 @@ class AdminController extends BaseController
             $totalJudges = count($judges_list);
             $completedJudges = 0;
             foreach ($judges_list as $judge) {
-                if (!empty($judge['completed_at'])) {
+                if (($judge['judge_round_status'] ?? 'pending') === 'completed') {
                     $completedJudges++;
                 }
             }

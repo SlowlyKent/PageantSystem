@@ -212,7 +212,7 @@ class ScoreModel extends Model
         $completed = 0;
         
         foreach ($judges as $judge) {
-            if (!empty($judge['is_completed'])) {
+            if (($judge['judge_round_status'] ?? 'pending') === 'completed') {
                 $completed++;
             }
         }

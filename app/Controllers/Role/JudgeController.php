@@ -134,18 +134,16 @@ class JudgeController extends BaseController
 
         // Check which rounds this judge has completed and if they're locked
         foreach ($rounds as &$round) {
+            $this->roundModel->ensureJudgeAssignments((int)$round['id']);
+
             $judgeAssignment = $db->table('round_judges')
                 ->where('round_id', $round['id'])
                 ->where('judge_id', $judgeId)
                 ->get()
                 ->getRowArray();
             
-            // Mark as completed if judge has completed_at timestamp
-            if ($judgeAssignment && !empty($judgeAssignment['completed_at'])) {
-                $round['judge_completed'] = true;
-            } else {
-                $round['judge_completed'] = false;
-            }
+            $judgeStatus = $judgeAssignment['judge_round_status'] ?? 'pending';
+            $round['judge_completed'] = $judgeStatus === 'completed';
             
             // Check if round is locked by admin
             $round['is_locked'] = isset($round['is_locked']) && $round['is_locked'] == 1;
@@ -154,7 +152,7 @@ class JudgeController extends BaseController
             // Judge completion stats for this round
             $round['completed_judges'] = $db->table('round_judges')
                 ->where('round_id', $round['id'])
-                ->where('completed_at IS NOT NULL', null, false)
+                ->where('judge_round_status', 'completed')
                 ->countAllResults();
             $round['total_judges'] = $db->table('round_judges')
                 ->where('round_id', $round['id'])
@@ -192,6 +190,9 @@ class JudgeController extends BaseController
             return redirect()->to(base_url('judge/select-round'))
                            ->with('error', 'Round not found.');
         }
+
+        // Make sure every active judge has an assignment row for this round
+        $this->roundModel->ensureJudgeAssignments($roundId);
         
         // Check if judge is assigned to this round and get completion status
         $judgeAssignment = $db->table('round_judges')
@@ -207,6 +208,7 @@ class JudgeController extends BaseController
                 'round_id' => $roundId,
                 'judge_id' => $judgeId,
                 'assigned' => 1,
+                'judge_round_status' => 'pending',
                 'completed_at' => null,
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
@@ -231,13 +233,14 @@ class JudgeController extends BaseController
         
         // Check completion status for each round
         foreach ($all_rounds as &$rnd) {
+            $this->roundModel->ensureJudgeAssignments((int)$rnd['id']);
             // Check if all active judges completed this round
             $completedJudges = $db->table('users')
                 ->join('roles', 'roles.id = users.role_id')
                 ->join('round_judges', 'round_judges.judge_id = users.id AND round_judges.round_id = ' . (int)$rnd['id'])
                 ->where('roles.name', 'judge')
                 ->where('users.status', 'active')
-                ->where('round_judges.completed_at IS NOT NULL', null, false)
+                ->where('round_judges.judge_round_status', 'completed')
                 ->countAllResults();
             
             $rnd['is_completed'] = ($totalActiveJudges > 0 && $totalActiveJudges == $completedJudges);
@@ -274,17 +277,15 @@ class JudgeController extends BaseController
             ->join('round_judges', 'round_judges.judge_id = users.id AND round_judges.round_id = ' . (int)$roundId)
             ->where('roles.name', 'judge')
             ->where('users.status', 'active')
-            ->where('round_judges.completed_at IS NOT NULL', null, false)
+            ->where('round_judges.judge_round_status', 'completed')
             ->countAllResults();
         
         // Get to_eliminate from round settings
         $toEliminate = $round['elimination_quota'] ?? 0;
         
         // Check if current judge has completed this round
-        $currentJudgeCompleted = false;
-        if ($judgeAssignment && !empty($judgeAssignment['completed_at'])) {
-            $currentJudgeCompleted = true;
-        }
+        $currentJudgeStatus = $judgeAssignment['judge_round_status'] ?? 'pending';
+        $currentJudgeCompleted = ($currentJudgeStatus === 'completed');
         
         // Check if next round exists and is unlocked
         $nextRound = null;
@@ -327,7 +328,7 @@ class JudgeController extends BaseController
         
         // Get all judges assigned to this round with their details
         $judgesList = $db->table('round_judges')
-            ->select('users.id, users.full_name as name, users.email, round_judges.completed_at')
+            ->select('users.id, users.full_name as name, users.email, round_judges.completed_at, round_judges.judge_round_status')
             ->join('users', 'users.id = round_judges.judge_id')
             ->where('round_judges.round_id', $roundId)
             ->orderBy('users.full_name', 'ASC')
@@ -347,6 +348,7 @@ class JudgeController extends BaseController
             'contestants' => $contestants,
             'existing_scores' => $existing_scores,
             'current_judge_completed' => $currentJudgeCompleted,
+            'current_judge_status' => $currentJudgeStatus,
             'next_round' => $nextRound,
             'next_round_unlocked' => $nextRoundUnlocked,
             'is_final_round' => $isFinalRound,
@@ -384,6 +386,8 @@ class JudgeController extends BaseController
                 ->with('error', 'Round not found.');
         }
 
+        $this->roundModel->ensureJudgeAssignments($roundId);
+
         // Ensure judge is assigned to this round
         $judgeAssignment = $db->table('round_judges')
             ->where('round_id', $roundId)
@@ -396,6 +400,7 @@ class JudgeController extends BaseController
                 'round_id' => $roundId,
                 'judge_id' => $judgeId,
                 'assigned' => 1,
+                'judge_round_status' => 'pending',
                 'completed_at' => null,
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
@@ -415,7 +420,7 @@ class JudgeController extends BaseController
             ->join('round_judges', 'round_judges.judge_id = users.id AND round_judges.round_id = ' . (int)$roundId)
             ->where('roles.name', 'judge')
             ->where('users.status', 'active')
-            ->where('round_judges.completed_at IS NOT NULL', null, false)
+            ->where('round_judges.judge_round_status', 'completed')
             ->countAllResults();
 
         $data = [
@@ -451,6 +456,11 @@ class JudgeController extends BaseController
             return redirect()->back()->with('error', 'Invalid round or contestant.');
         }
 
+        if ($this->isJudgeRoundLocked((int)$roundId, $judgeId)) {
+            return redirect()->to(base_url("judge/score-round/{$roundId}"))
+                ->with('error', 'You have already marked this round as complete. Scoring is locked.');
+        }
+
         // Get existing scores if any
         $existingScores = $this->scoreModel->getJudgeScoresForRound($judgeId, $roundId);
         $scoresArray = [];
@@ -479,6 +489,11 @@ class JudgeController extends BaseController
         $roundId = $this->request->getPost('round_id');
         $contestantId = $this->request->getPost('contestant_id');
         $scores = $this->request->getPost('scores'); // Array of criteria_id => score
+
+        if ($this->isJudgeRoundLocked((int)$roundId, $judgeId)) {
+            return redirect()->to(base_url("judge/score-round/{$roundId}"))
+                ->with('error', 'This round has already been marked as complete for you. You can only view results.');
+        }
 
         $db = \Config\Database::connect();
         $db->transStart();
@@ -553,6 +568,13 @@ class JudgeController extends BaseController
         $scoreValue = $this->request->getPost('score');
 
         try {
+            if ($this->isJudgeRoundLocked((int)$roundId, $judgeId)) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'This round is locked. You already marked it as complete.'
+                ]);
+            }
+
             $db = \Config\Database::connect();
 
             $assignmentCount = $db->table('round_contestants')
@@ -616,6 +638,11 @@ class JudgeController extends BaseController
         $judgeId = session()->get('user_id') ?? 1;
         $roundId = $this->request->getPost('round_id');
         $scores = $this->request->getPost('scores'); // Array of [contestant_id][criteria_id] => score
+
+        if ($this->isJudgeRoundLocked((int)$roundId, $judgeId)) {
+            return redirect()->to(base_url("judge/score-round/{$roundId}"))
+                ->with('error', 'This round is locked because you already marked it as complete.');
+        }
 
         $db = \Config\Database::connect();
         $db->transStart();
@@ -689,6 +716,8 @@ class JudgeController extends BaseController
         $judgeId = session()->get('user_id') ?? 1;
         $db = \Config\Database::connect();
         
+        $this->roundModel->ensureJudgeAssignments($roundId);
+
         try {
             // Ensure judge has scored all contestants/criteria before completing
             $criteriaCount = $db->table('round_criteria')
@@ -724,9 +753,17 @@ class JudgeController extends BaseController
                 ->getRowArray();
             
             if ($roundJudge) {
+                if (($roundJudge['judge_round_status'] ?? 'pending') === 'completed') {
+                    return redirect()->to(base_url("judge/score-round/{$roundId}"))
+                        ->with('info', 'You already marked this round as complete.');
+                }
+
                 $db->table('round_judges')
                     ->where('id', $roundJudge['id'])
-                    ->update(['completed_at' => date('Y-m-d H:i:s')]);
+                    ->update([
+                        'completed_at' => date('Y-m-d H:i:s'),
+                        'judge_round_status' => 'completed',
+                    ]);
                 
                 // Count active judges ASSIGNED to this round
                 // Only judges present in round_judges should be considered for completion
@@ -745,7 +782,7 @@ class JudgeController extends BaseController
                     ->where('round_judges.round_id', (int)$roundId)
                     ->where('roles.name', 'judge')
                     ->where('users.status', 'active')
-                    ->where('round_judges.completed_at IS NOT NULL', null, false)
+                    ->where('round_judges.judge_round_status', 'completed')
                     ->countAllResults();
                 
                 // If all active judges completed, automatically mark round as completed
@@ -999,5 +1036,19 @@ class JudgeController extends BaseController
                 ->where('contestant_id', $contestantId)
                 ->update(['state' => $state, 'updated_at' => date('Y-m-d H:i:s')]);
         }
+    }
+
+    /**
+     * Check if the given judge has already completed the round.
+     */
+    private function isJudgeRoundLocked(int $roundId, int $judgeId): bool
+    {
+        $assignment = \Config\Database::connect()->table('round_judges')
+            ->where('round_id', $roundId)
+            ->where('judge_id', $judgeId)
+            ->get()
+            ->getRowArray();
+
+        return $assignment && ($assignment['judge_round_status'] ?? 'pending') === 'completed';
     }
 }

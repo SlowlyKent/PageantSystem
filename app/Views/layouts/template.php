@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title><?= $this->renderSection('title') ?> - <?= esc(system_name()) ?></title>
     
     <!-- Bootstrap 5 CSS -->
@@ -70,6 +70,16 @@
                 }
             });
         })();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const bell = document.getElementById('notificationBell');
+            const count = document.getElementById('notificationCount');
+            if (bell && count) {
+                bell.addEventListener('click', function() {
+                    count.remove();
+                }, { once: true });
+            }
+        });
     </script>
     
     <!-- Additional Scripts -->

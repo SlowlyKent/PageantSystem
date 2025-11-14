@@ -4,11 +4,69 @@
 
 <?= $this->section('content') ?>
 
+<?php
+    $notifications = [];
+
+    if (!empty($current_round)) {
+        $roundName = esc($current_round['round_name'] ?? ('Round ' . ($current_round['round_number'] ?? $current_round['id'] ?? '')));
+        $pendingJudges = max(0, ($judge_completion['total'] ?? 0) - ($judge_completion['completed'] ?? 0));
+
+        if (($judge_completion['percentage'] ?? 0) >= 100) {
+            $notifications[] = [
+                'type'    => 'success',
+                'message' => "All judges completed scoring for <strong>{$roundName}</strong>. You can advance to the next round."
+            ];
+        } elseif ($pendingJudges > 0) {
+            $notifications[] = [
+                'type'    => 'warning',
+                'message' => "{$pendingJudges} judge" . ($pendingJudges > 1 ? 's' : '') . " still need to finish scoring <strong>{$roundName}</strong>."
+            ];
+        }
+
+        if (!empty($judges_list)) {
+            foreach ($judges_list as $judge) {
+                if (empty($judge['completed_at'])) {
+                    $notifications[] = [
+                        'type'    => 'info',
+                        'message' => "<strong>" . esc($judge['full_name']) . "</strong> has not submitted scores yet."
+                    ];
+                }
+            }
+        }
+    } else {
+        $notifications[] = [
+            'type'    => 'warning',
+            'message' => 'No active round. Activate a round so judges can start scoring.'
+        ];
+    }
+?>
+
 <!-- Page Header -->
 <div class="page-header d-flex justify-content-between align-items-center">
     <div>
         <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
         <p>Welcome, System Administrator</p>
+    </div>
+    <div class="notification-wrapper dropdown">
+        <button class="notification-bell btn btn-light" id="notificationBell" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-bell"></i>
+            <?php if (!empty($notifications)): ?>
+                <span class="notification-count" id="notificationCount"><?= count($notifications) ?></span>
+            <?php endif; ?>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end notification-menu">
+            <h6 class="dropdown-header">Notifications</h6>
+            <?php if (empty($notifications)): ?>
+                <div class="dropdown-item text-muted small">You're all caught up!</div>
+            <?php else: ?>
+                <?php foreach ($notifications as $note): ?>
+                    <div class="dropdown-item notification-item notification-<?= esc($note['type']) ?>">
+                        <i class="bi <?= $note['type'] === 'success' ? 'bi-check-circle-fill' : ($note['type'] === 'warning' ? 'bi-exclamation-triangle-fill' : 'bi-info-circle-fill') ?>"></i>
+                        <span><?= $note['message'] ?></span>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
 
@@ -137,7 +195,7 @@
                                 <div class="judge-item d-flex align-items-center justify-content-between">
                                     <span class="fw-medium"><?= esc($judge['full_name']) ?></span>
                                     <div class="text-end">
-                                        <?php if (!empty($judge['completed_at'])): ?>
+                                        <?php if (($judge['judge_round_status'] ?? 'pending') === 'completed'): ?>
                                             <span class="badge bg-success rounded-pill">Complete</span>
                                             <br>
                                             <small class="text-muted"><?= date('M d, h:i A', strtotime($judge['completed_at'])) ?></small>
@@ -155,16 +213,6 @@
                         </div>
                     <?php endif; ?>
                     
-                    <!-- Round Completion Info -->
-                    <?php if ($judge_completion['percentage'] >= 100 && $judge_completion['total'] > 0): ?>
-                        <div class="mt-4">
-                            <div class="alert alert-success border-0 shadow-sm">
-                                <i class="bi bi-check-circle-fill me-2"></i>
-                                <strong>All judges have completed scoring!</strong>
-                                <p class="mb-0 mt-2 small">This round will automatically be marked as completed. Go to <a href="<?= base_url('admin/rounds-criteria') ?>" class="alert-link fw-bold">Rounds & Criteria Management</a> to activate the next round.</p>
-                            </div>
-                        </div>
-                    <?php endif; ?>
                 <?php else: ?>
                     <div class="text-center py-4">
                         <i class="bi bi-inbox empty-state-icon icon-display-lg"></i>

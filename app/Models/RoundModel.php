@@ -103,4 +103,52 @@ class RoundModel extends Model
     {
         return $this->update($id, ['is_locked' => 0, 'status' => 'active']);
     }
+
+    /**
+     * Ensure every active judge has an assignment row for the given round.
+     */
+    public function ensureJudgeAssignments(int $roundId): void
+    {
+        $round = $this->find($roundId);
+        if (!$round) {
+            return;
+        }
+
+        $db = \Config\Database::connect();
+
+        $activeJudges = $db->table('users')
+            ->select('users.id')
+            ->join('roles', 'roles.id = users.role_id')
+            ->where('roles.name', 'judge')
+            ->where('users.status', 'active')
+            ->get()
+            ->getResultArray();
+
+        if (empty($activeJudges)) {
+            return;
+        }
+
+        $existingAssignments = $db->table('round_judges')
+            ->select('judge_id')
+            ->where('round_id', $roundId)
+            ->get()
+            ->getResultArray();
+
+        $existingMap = array_column($existingAssignments, 'judge_id');
+
+        $now = date('Y-m-d H:i:s');
+
+        foreach ($activeJudges as $judge) {
+            if (!in_array($judge['id'], $existingMap, true)) {
+                $db->table('round_judges')->insert([
+                    'round_id'           => $roundId,
+                    'judge_id'           => $judge['id'],
+                    'assigned'           => 1,
+                    'judge_round_status' => 'pending',
+                    'completed_at'       => null,
+                    'updated_at'         => $now,
+                ]);
+            }
+        }
+    }
 }

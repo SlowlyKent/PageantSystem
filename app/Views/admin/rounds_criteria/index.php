@@ -119,7 +119,7 @@
                             ->join('round_judges', 'round_judges.judge_id = users.id AND round_judges.round_id = ' . (int)$round['id'])
                             ->where('roles.name', 'judge')
                             ->where('users.status', 'active')
-                            ->where('round_judges.completed_at IS NOT NULL', null, false)
+                            ->where('round_judges.judge_round_status', 'completed')
                             ->countAllResults();
                         ?>
                         <?php if ($totalJudges > 0): ?>
