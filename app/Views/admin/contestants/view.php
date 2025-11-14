@@ -2,102 +2,6 @@
 
 <?= $this->section('title') ?>Contestant Details<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .profile-photo {
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
-        border-radius: 15px;
-        border: 3px solid #ddd;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    
-    .info-label {
-        font-weight: 600;
-        color: #667eea;
-        margin-bottom: 5px;
-    }
-    
-    .info-value {
-        font-size: 16px;
-        margin-bottom: 20px;
-    }
-
-    @media print {
-        .no-print,
-        .sidebar,
-        header,
-        nav {
-            display: none !important;
-        }
-
-        body {
-            background: #ffffff;
-            font-size: 12px;
-        }
-
-        .container-fluid,
-        .container {
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .card {
-            box-shadow: none !important;
-            border: 1px solid #d1d5db !important;
-            margin-bottom: 12px !important;
-        }
-
-        .card-body {
-            padding: 18px !important;
-        }
-
-        .card-header {
-            background: #f1f5f9 !important;
-            color: #0f172a !important;
-            border-bottom: 1px solid #d1d5db !important;
-            padding: 12px 18px !important;
-        }
-
-        .info-label {
-            color: #0f172a !important;
-            margin-bottom: 4px !important;
-        }
-
-        .info-value {
-            margin-bottom: 12px !important;
-            color: #1f2937 !important;
-        }
-
-        a[href]:after {
-            content: "";
-        }
-
-        .profile-photo {
-            border: 1px solid #d1d5db !important;
-            box-shadow: none !important;
-        }
-
-        @page {
-            margin: 15mm;
-        }
-
-        .page-break {
-            page-break-after: always;
-        }
-
-        .print-layout {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-    }
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
@@ -127,9 +31,8 @@
                          alt="<?= esc($contestant['first_name']) ?>" 
                          class="profile-photo mb-3">
                 <?php else: ?>
-                    <div class="profile-photo mx-auto mb-3 d-flex align-items-center justify-content-center" 
-                         style="background: #f0f0f0;">
-                        <i class="bi bi-person" style="font-size: 80px; color: #999;"></i>
+                    <div class="profile-photo profile-photo-placeholder mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-person placeholder-icon-lg"></i>
                     </div>
                 <?php endif; ?>
                 

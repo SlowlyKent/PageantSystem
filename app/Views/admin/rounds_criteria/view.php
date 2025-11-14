@@ -2,51 +2,6 @@
 
 <?= $this->section('title') ?>Round Details<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .segment-card {
-        border-radius: 15px;
-        overflow: hidden;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .segment-header-1 {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px;
-    }
-    
-    .segment-header-2 {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        padding: 20px;
-    }
-    
-    .criteria-table {
-        margin: 0;
-    }
-    
-    .criteria-table th {
-        background: #f8f9fa;
-        font-weight: 600;
-    }
-    
-    .percentage-bar {
-        height: 8px;
-        background: #e9ecef;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-    
-    .percentage-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
-        transition: width 0.3s;
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
@@ -66,7 +21,7 @@
 <!-- Round Info Card -->
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body p-4">
-        <h6 class="text-uppercase text-muted mb-4" style="font-weight: 600; letter-spacing: 0.5px; font-size: 0.75rem;">Round Information</h6>
+        <h6 class="text-uppercase text-muted mb-4 section-label">Round Information</h6>
         
         <div class="row g-4">
             <div class="col-md-2">
@@ -130,7 +85,7 @@
 
         <?php if (!empty($round['criteria'])): ?>
             <div class="table-responsive">
-                <table class="table table-hover align-middle" style="border: 1px solid #dee2e6;">
+                <table class="table table-hover align-middle table-bordered-light">
                     <thead>
                         <tr>
                             <th width="5%">#</th>

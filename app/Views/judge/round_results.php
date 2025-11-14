@@ -2,81 +2,6 @@
 
 <?= $this->section('title') ?>Round Rankings<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-.podium-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    align-items: end;
-}
-.podium-place {
-    position: relative;
-    background: #ffffff;
-    border: 2px solid #eef2ff;
-    border-radius: 16px;
-    padding: 18px 16px 20px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    text-align: center;
-}
-.podium-place.first {
-    border-color: #fde68a;
-    background: linear-gradient(180deg, #fff7ed 0%, #fffde7 100%);
-}
-.podium-place.second {
-    border-color: #e5e7eb;
-    background: linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%);
-}
-.podium-place.third {
-    border-color: #f3e8ff;
-    background: linear-gradient(180deg, #faf5ff 0%, #fff7ed 100%);
-}
-.podium-avatar-container {
-    position: relative;
-    margin-bottom: 10px;
-}
-.podium-avatar {
-    width: 140px;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 16px;
-    border: 4px solid #fff;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    background: #f3f4f6;
-}
-.place-badge {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 6px 10px;
-    font-size: 11px;
-    font-weight: 800;
-    border-radius: 10px;
-    letter-spacing: .5px;
-    color: #111827;
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-}
-.place-badge.first { background: #fef3c7; border-color: #fde68a; }
-.place-badge.second { background: #e5e7eb; border-color: #d1d5db; }
-.place-badge.third { background: #ffedd5; border-color: #fdba74; }
-.podium-name {
-    font-weight: 700;
-    font-size: 16px;
-    color: #1f2937;
-    margin-top: 6px;
-}
-.podium-score {
-    font-weight: 800;
-    color: #111827;
-    margin-top: 4px;
-    font-size: 15px;
-}
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <div class="container-fluid px-4 py-4">
@@ -123,9 +48,9 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center" style="width: 80px;">Rank</th>
+                                <th class="text-center table-col-rank">Rank</th>
                                 <th>Contestant</th>
-                                <th class="text-center" style="width: 140px;">Average Score</th>
+                                <th class="text-center table-col-score">Average Score</th>
                             </tr>
                         </thead>
                         <tbody>

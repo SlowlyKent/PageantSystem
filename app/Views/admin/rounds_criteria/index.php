@@ -2,21 +2,6 @@
 
 <?= $this->section('title') ?>Rounds & Criteria<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .round-card {
-        transition: all 0.3s;
-        border-left: 4px solid #667eea;
-    }
-    
-    .round-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    }
-    
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
@@ -77,7 +62,7 @@
 <?php if (empty($rounds)): ?>
     <div class="card shadow-sm">
         <div class="card-body text-center py-5">
-            <i class="bi bi-inbox" style="font-size: 64px; color: #ccc;"></i>
+            <i class="bi bi-inbox empty-state-icon icon-display-xl"></i>
             <h4 class="mt-3 text-muted">No Rounds Created Yet</h4>
             <p class="text-muted">Start by creating your first pageant round and defining its judging criteria.</p>
         </div>
@@ -184,7 +169,7 @@
                             
                             <?php if (!empty($round['is_elimination'])): ?>
                                 <form class="d-flex align-items-center gap-2" action="<?= base_url('admin/rounds-criteria/eliminate/' . $round['id']) ?>" method="post" onsubmit="return confirm('Proceed with elimination and advance Top N to next round?');">
-                                    <input type="number" class="form-control form-control-sm" name="elimination_quota" min="1" placeholder="Top N" style="max-width:120px;" value="<?= esc($round['elimination_quota'] ?? '') ?>">
+                                    <input type="number" class="form-control form-control-sm quota-input" name="elimination_quota" min="1" placeholder="Top N" value="<?= esc($round['elimination_quota'] ?? '') ?>">
                                     <button type="submit" class="btn btn-sm btn-warning">
                                         <i class="bi bi-filter-circle"></i> Eliminate
                                     </button>

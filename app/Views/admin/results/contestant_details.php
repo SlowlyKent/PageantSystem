@@ -2,25 +2,6 @@
 
 <?= $this->section('title') ?>Contestant Detailed Scores<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .judge-card {
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
-    .criteria-row:hover {
-        background: #f8f9fa;
-    }
-    .profile-photo {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 2px solid #e9ecef;
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">

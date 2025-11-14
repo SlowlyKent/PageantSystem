@@ -2,49 +2,6 @@
 
 <?= $this->section('title') ?>Edit Contestant<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .photo-preview {
-        width: 150px;
-        height: 150px;
-        border: 2px dashed #ddd;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        background: #f8f9fa;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    
-    .photo-preview:hover {
-        border-color: #667eea;
-        background: #f0f0ff;
-    }
-    
-    .photo-preview img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    
-    .photo-preview-placeholder {
-        text-align: center;
-        color: #999;
-    }
-    
-    .section-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 10px 15px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-        margin-top: 25px;
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
@@ -91,13 +48,12 @@
                     </label>
                     <input 
                         type="text" 
-                        class="form-control" 
+                        class="form-control input-readonly" 
                         id="contestant_number" 
                         name="contestant_number" 
                         value="<?= old('contestant_number', $contestant['contestant_number']) ?>"
                         required
                         readonly
-                        style="background: #f0f0f0;"
                     >
                 </div>
                 
@@ -170,12 +126,11 @@
                     </label>
                     <input 
                         type="number" 
-                        class="form-control" 
+                        class="form-control input-highlight" 
                         id="age" 
                         name="age" 
                         value="<?= old('age', $contestant['age']) ?>"
                         required
-                        style="background: #fffacd;"
                     >
                     <small class="text-muted">Auto-calculated</small>
                 </div>
@@ -315,7 +270,7 @@
                             <?php if (!empty($contestant['profile_picture'])): ?>
                                 <img src="<?= base_url('uploads/contestants/' . $contestant['profile_picture']) ?>" alt="Current Photo">
                             <?php else: ?>
-                                <i class="bi bi-camera" style="font-size: 40px;"></i>
+                                <i class="bi bi-camera camera-icon"></i>
                                 <p class="mb-0 small">Click to upload</p>
                             <?php endif; ?>
                         </div>

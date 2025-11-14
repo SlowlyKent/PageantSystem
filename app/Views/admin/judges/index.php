@@ -2,72 +2,6 @@
 
 <?= $this->section('title') ?>Judges Management<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .action-btn {
-        padding: 5px 10px;
-        margin: 0 2px;
-        border-radius: 5px;
-        font-size: 14px;
-        transition: all 0.3s;
-    }
-    
-    .btn-view {
-        background: #17a2b8;
-        color: white;
-    }
-    
-    .btn-view:hover {
-        background: #138496;
-        color: white;
-    }
-    
-    .btn-edit {
-        background: #ffc107;
-        color: #333;
-    }
-    
-    .btn-edit:hover {
-        background: #e0a800;
-        color: #333;
-    }
-    
-    .btn-delete {
-        background: #dc3545;
-        color: white;
-    }
-    
-    .btn-delete:hover {
-        background: #c82333;
-        color: white;
-    }
-    
-    .status-badge {
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-    
-    .status-active {
-        background: #28a745;
-        color: white;
-    }
-    
-    .status-inactive {
-        background: #6c757d;
-        color: white;
-    }
-    
-    .judges-table {
-        background: white;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
@@ -143,7 +77,7 @@
                 <?php if (empty($judges)): ?>
                     <tr>
                         <td colspan="5" class="text-center py-5">
-                            <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
+                            <i class="bi bi-inbox empty-state-icon icon-display-lg"></i>
                             <p class="text-muted mt-3">No judges found. Click "Add New Judge" to create one.</p>
                         </td>
                     </tr>

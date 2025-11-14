@@ -2,58 +2,6 @@
 
 <?= $this->section('title') ?>Judge Dashboard<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    body {
-        overflow-x: hidden;
-    }
-    main {
-        max-width: 100vw;
-        overflow-x: hidden;
-    }
-    .container-fluid {
-        max-width: 100%;
-        overflow-x: hidden;
-    }
-    .row {
-        margin-left: 0;
-        margin-right: 0;
-        max-width: 100%;
-    }
-    [class*="col-"] {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
-    .stat-card {
-        border-radius: 15px;
-        border: none;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        transition: transform 0.2s;
-    }
-    .stat-card:hover {
-        transform: translateY(-5px);
-    }
-    .stat-icon {
-        font-size: 3rem;
-        opacity: 0.3;
-    }
-    .action-btn {
-        border-radius: 10px;
-        padding: 15px;
-        font-weight: 600;
-        transition: all 0.3s;
-    }
-    .action-btn:hover {
-        transform: scale(1.05);
-    }
-    .section-card {
-        border-radius: 15px;
-        border: none;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 <div class="container-fluid p-4">
 <!-- Header -->
@@ -62,14 +10,13 @@
         <?php 
         $settingsModel = new \App\Models\SettingsModel();
         $logo = $settingsModel->getSetting('logo');
-        $titleFont = $settingsModel->getSetting('title_font') ?: 'Arial, sans-serif';
         if ($logo): 
         ?>
             <img src="<?= base_url('uploads/settings/' . $logo) ?>" 
                  alt="Logo" 
-                 style="width: 60px; height: 60px; object-fit: contain;">
+                 class="judge-dashboard-logo">
         <?php endif; ?>
-        <h1 class="h2 mb-0" style="font-family: <?= esc($titleFont) ?>;"><?= esc(system_name()) ?></h1>
+        <h1 class="h2 mb-0 title-font"><?= esc(system_name()) ?></h1>
     </div>
     <div>
         <a href="<?= base_url('logout') ?>" class="btn btn-secondary text-white">
@@ -81,20 +28,20 @@
 <!-- Welcome Alert -->
 <?php if (!empty($active_round)): ?>
     <?php if ($eliminated_contestants > 0): ?>
-        <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert" style="border-radius: 15px; border-left: 5px solid #ffc107;">
+        <div class="alert alert-warning alert-dismissible fade show mb-4 alert-with-divider alert-border-warning" role="alert">
             <i class="bi bi-exclamation-triangle-fill"></i>
             <strong>Heads up!</strong> <?= $eliminated_contestants ?> <?= $eliminated_contestants == 1 ? 'contestant has' : 'contestants have' ?> been eliminated in this round.
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php elseif ($completed_scores > 0): ?>
-        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" style="border-radius: 15px; border-left: 5px solid #198754;">
+        <div class="alert alert-success alert-dismissible fade show mb-4 alert-with-divider alert-border-success" role="alert">
             <i class="bi bi-check-circle-fill"></i>
             <strong>Great job, Judge!</strong> You have completed scoring for all <?= $completed_scores ?> <?= $completed_scores == 1 ? 'contestant' : 'contestants' ?> in this round.
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
 <?php else: ?>
-    <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert" style="border-radius: 15px; border-left: 5px solid #ffc107;">
+    <div class="alert alert-warning alert-dismissible fade show mb-4 alert-with-divider alert-border-warning" role="alert">
         <i class="bi bi-info-circle-fill"></i>
         <strong>Welcome back, Judge!</strong> There is currently no active round. Please wait for the admin to activate a round.
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -169,7 +116,7 @@
             <h5 class="mb-3"><i class="bi bi-trophy"></i> Current Round</h5>
             <?php if (!empty($active_round)): ?>
                 <div class="text-center py-5">
-                    <i class="bi bi-circle-fill text-primary" style="font-size: 3rem;"></i>
+                    <i class="bi bi-circle-fill text-primary icon-display-lg"></i>
                     <h4 class="mt-3"><?= esc($active_round['round_name']) ?></h4>
                     <p class="text-muted"><?= esc($active_round['description'] ?? 'Round ' . $active_round['round_number']) ?></p>
                     <div class="mt-4">
@@ -178,7 +125,7 @@
                 </div>
             <?php else: ?>
                 <div class="text-center py-5 text-muted">
-                    <i class="bi bi-info-circle" style="font-size: 3rem;"></i>
+                    <i class="bi bi-info-circle empty-state-icon icon-display-lg"></i>
                     <h5 class="mt-3">No Active Round</h5>
                     <p>Wait for the admin to start a new round</p>
                 </div>

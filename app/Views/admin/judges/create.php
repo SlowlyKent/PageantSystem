@@ -45,8 +45,8 @@
             <?= csrf_field() ?>
 
             <!-- Decoy fields to defeat browser autofill -->
-            <input type="text" name="fake_email" autocomplete="username" tabindex="-1" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;">
-            <input type="password" name="fake_password" autocomplete="new-password" tabindex="-1" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;">
+            <input type="text" name="fake_email" autocomplete="username" tabindex="-1" class="offscreen-input">
+            <input type="password" name="fake_password" autocomplete="new-password" tabindex="-1" class="offscreen-input">
             
             <div class="row">
                 <!-- Full Name -->

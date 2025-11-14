@@ -47,7 +47,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-3" id="quota_section" style="display: <?= $round['is_elimination'] ? 'block' : 'none' ?>;">
+                    <div class="mb-3 <?= $round['is_elimination'] ? '' : 'd-none' ?>" id="quota_section">
                         <label for="elimination_quota" class="form-label">Top N to Advance</label>
                         <input type="number" class="form-control" id="elimination_quota" name="elimination_quota" value="<?= $round['elimination_quota'] ?? '' ?>" min="1">
                     </div>
@@ -105,7 +105,7 @@
 
 <script>
 document.getElementById('is_elimination').addEventListener('change', function() {
-    document.getElementById('quota_section').style.display = this.checked ? 'block' : 'none';
+    document.getElementById('quota_section').classList.toggle('d-none', !this.checked);
 });
 </script>
 

@@ -2,45 +2,6 @@
 
 <?= $this->section('title') ?>Round Rankings<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .podium-card {
-        text-align: center;
-        padding: 30px;
-        border-radius: 15px;
-        position: relative;
-    }
-    
-    .rank-1 { 
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        transform: scale(1.1);
-        z-index: 3;
-    }
-    
-    .rank-2 { 
-        background: linear-gradient(135deg, #C0C0C0 0%, #808080 100%);
-        z-index: 2;
-    }
-    
-    .rank-3 { 
-        background: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%);
-        z-index: 1;
-    }
-    
-    .podium-number {
-        font-size: 64px;
-        font-weight: bold;
-        color: white;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    .ranking-table tbody tr:hover {
-        background: #f8f9fa;
-        cursor: pointer;
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -95,7 +56,7 @@
             <!-- 1st Place -->
             <div class="col-md-4">
                 <div class="card podium-card rank-1 w-100">
-                    <i class="bi bi-trophy-fill" style="font-size: 48px; color: white;"></i>
+                    <i class="bi bi-trophy-fill podium-trophy-icon"></i>
                     <div class="podium-number">1</div>
                     <h4 class="text-white"><?= esc($rankings[0]['contestant_name']) ?></h4>
                     <p class="text-white mb-0">Contestant #<?= $rankings[0]['contestant_number'] ?></p>

@@ -2,44 +2,6 @@
 
 <?= $this->section('title') ?>Judge Details<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-  /* Make this page use full width */
-  main.container { max-width: 100% !important; }
-
-  @media print {
-    .no-print,
-    .sidebar,
-    header,
-    nav {
-      display: none !important;
-    }
-
-    body { background: #ffffff; }
-    .container-fluid,
-    .container {
-      width: 100% !important;
-      max-width: 100% !important;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-
-    .card {
-      box-shadow: none !important;
-      border: 1px solid #d1d5db !important;
-      page-break-inside: avoid;
-    }
-
-    .card-header {
-      background: #f1f5f9 !important;
-      color: #0f172a !important;
-    }
-
-    @page { margin: 15mm; }
-  }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <!-- Page Header -->

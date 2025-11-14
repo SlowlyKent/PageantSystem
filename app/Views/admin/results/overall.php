@@ -2,39 +2,6 @@
 
 <?= $this->section('title') ?>Overall Rankings<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .winner-card {
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        border-radius: 20px;
-        padding: 40px;
-        text-align: center;
-        color: white;
-        box-shadow: 0 10px 30px rgba(255,215,0,0.3);
-    }
-    
-    .winner-trophy {
-        font-size: 120px;
-        animation: bounce 2s infinite;
-    }
-    
-    @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-        40% { transform: translateY(-20px); }
-        60% { transform: translateY(-10px); }
-    }
-    
-    .contestant-row {
-        transition: all 0.3s;
-    }
-    
-    .contestant-row:hover {
-        background: #f8f9fa;
-        transform: scale(1.02);
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -103,13 +70,9 @@
                                 <td>
                                     <?php if (!empty($ranking['profile_picture'])): ?>
                                         <img src="<?= base_url('uploads/contestants/' . $ranking['profile_picture']) ?>" 
-                                             class="rounded-circle" 
-                                             width="50" 
-                                             height="50"
-                                             style="object-fit: cover;">
+                                             class="rounded-circle leaderboard-avatar">
                                     <?php else: ?>
-                                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" 
-                                             style="width: 50px; height: 50px;">
+                                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center leaderboard-avatar-placeholder">
                                             <i class="bi bi-person text-white"></i>
                                         </div>
                                     <?php endif; ?>

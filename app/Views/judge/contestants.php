@@ -111,10 +111,10 @@
                             <div class="col-md-4 text-center">
                                 <div class="mb-3">
                                     <?php if (!empty($contestant['profile_picture'])): ?>
-                                        <img src="<?= base_url('uploads/contestants/' . $contestant['profile_picture']) ?>" alt="<?= esc($contestant['first_name']) ?>" class="img-fluid rounded" style="width: 100%; height: 300px; object-fit: cover;">
+                                        <img src="<?= base_url('uploads/contestants/' . $contestant['profile_picture']) ?>" alt="<?= esc($contestant['first_name']) ?>" class="img-fluid rounded contestant-modal-photo">
                                     <?php else: ?>
-                                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 300px; border-radius: 10px;">
-                                            <i class="bi bi-person" style="font-size: 5rem;"></i>
+                                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center contestant-modal-placeholder">
+                                            <i class="bi bi-person icon-xxl"></i>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -124,82 +124,82 @@
                                 <h4 class="mb-4 fw-bold"><?= esc($contestant['first_name'] . ' ' . ($contestant['middle_name'] ?? '') . ' ' . $contestant['last_name']) ?></h4>
                                 
                                 <div class="mb-4">
-                                    <h6 class="text-primary mb-3 fw-bold" style="border-bottom: 2px solid #0d6efd; padding-bottom: 8px;">Basic Information</h6>
+                                    <h6 class="text-primary mb-3 fw-bold contestant-modal-section-title">Basic Information</h6>
                                     <table class="table table-sm">
                                         <tr>
-                                            <td class="text-muted fw-semibold" width="40%" style="background: #f8f9fa;">Contestant Number:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell" width="40%">Contestant Number:</td>
                                             <td class="fw-bold">#<?= $contestant['contestant_number'] ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Birthdate:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Birthdate:</td>
                                             <td><?= $contestant['birthdate'] ?? 'N/A' ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Age:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Age:</td>
                                             <td><?= $contestant['age'] ?? 'N/A' ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Gender:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Gender:</td>
                                             <td><?= ucfirst($contestant['gender'] ?? 'N/A') ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Height:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Height:</td>
                                             <td><?= $contestant['height'] ?? 'N/A' ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Weight:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Weight:</td>
                                             <td><?= $contestant['weight'] ?? 'N/A' ?></td>
                                         </tr>
                                     </table>
                                 </div>
                                 
                                 <div class="mb-4">
-                                    <h6 class="text-primary mb-3 fw-bold" style="border-bottom: 2px solid #0d6efd; padding-bottom: 8px;">Contact Information</h6>
+                                    <h6 class="text-primary mb-3 fw-bold contestant-modal-section-title">Contact Information</h6>
                                     <table class="table table-sm">
                                         <tr>
-                                            <td class="text-muted fw-semibold" width="40%" style="background: #f8f9fa;">Address:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell" width="40%">Address:</td>
                                             <td><?= esc($contestant['address'] ?? 'N/A') ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">City:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">City:</td>
                                             <td><?= esc($contestant['city'] ?? 'N/A') ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Province:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Province:</td>
                                             <td><?= esc($contestant['province'] ?? 'N/A') ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Contact Number:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Contact Number:</td>
                                             <td><?= esc($contestant['phone'] ?? $contestant['contact_number'] ?? 'N/A') ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Email:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Email:</td>
                                             <td><?= esc($contestant['email'] ?? 'N/A') ?></td>
                                         </tr>
                                     </table>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <h6 class="text-primary mb-3 fw-bold" style="border-bottom: 2px solid #0d6efd; padding-bottom: 8px;">Additional Information</h6>
+                                    <h6 class="text-primary mb-3 fw-bold contestant-modal-section-title">Additional Information</h6>
                                     <table class="table table-sm">
                                         <tr>
-                                            <td class="text-muted fw-semibold" width="40%" style="background: #f8f9fa;">Talent/Special Skill:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell" width="40%">Talent/Special Skill:</td>
                                             <td><?= esc($contestant['talent'] ?? 'N/A') ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Advocacy/Platform:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Advocacy/Platform:</td>
                                             <td><?= esc($contestant['advocacy'] ?? 'N/A') ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Hobbies/Interests:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Hobbies/Interests:</td>
                                             <td><?= esc($contestant['hobbies'] ?? 'N/A') ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Educational Background:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Educational Background:</td>
                                             <td><?= esc($contestant['education'] ?? 'N/A') ?></td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-semibold" style="background: #f8f9fa;">Status:</td>
+                                            <td class="text-muted fw-semibold contestant-label-cell">Status:</td>
                                             <td><span class="badge bg-<?= $contestant['status'] === 'active' ? 'success' : 'secondary' ?>"><?= ucfirst($contestant['status']) ?></span></td>
                                         </tr>
                                     </table>

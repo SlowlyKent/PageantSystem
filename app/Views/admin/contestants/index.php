@@ -2,8 +2,6 @@
 
 <?= $this->section('title') ?>Contestants Management<?= $this->endSection() ?>
 
-<?php /* Styles moved to public/assets/css/pages.css */ ?>
-
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
@@ -88,7 +86,7 @@
                 <?php if (empty($contestants)): ?>
                     <tr>
                         <td colspan="8" class="text-center py-5">
-                            <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
+                            <i class="bi bi-inbox empty-state-icon icon-display-lg"></i>
                             <p class="text-muted mt-3">No contestants found. Click "Add New Contestant" to create one.</p>
                         </td>
                     </tr>

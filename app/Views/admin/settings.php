@@ -7,115 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@400;700&family=Lora:wght@400;700&family=Merriweather:wght@400;700;900&family=EB+Garamond:wght@400;700&family=Montserrat:wght@400;700;900&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
-<style>
-    /* Settings Page Styles */
-    .settings-card {
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        padding: 25px;
-        margin-bottom: 25px;
-    }
-    
-    .settings-header {
-        border-bottom: 2px solid #f0f0f0;
-        padding-bottom: 15px;
-        margin-bottom: 25px;
-    }
-    
-    .settings-header h5 {
-        color: #333;
-        font-weight: 600;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .color-picker-group {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 10px;
-        background: #f8f9fa;
-        border-radius: 10px;
-        margin-bottom: 15px;
-    }
-    
-    .color-preview {
-        width: 50px;
-        height: 50px;
-        border-radius: 8px;
-        border: 2px solid #ddd;
-        cursor: pointer;
-    }
-    
-    .color-picker-group input[type="color"] {
-        width: 60px;
-        height: 50px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-    
-    .theme-preview-box {
-        margin-top: 20px;
-        padding: 30px;
-        border-radius: 15px;
-        text-align: center;
-        min-height: 200px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .preview-button {
-        padding: 12px 30px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-    
-    .logo-preview {
-        max-width: 200px;
-        max-height: 100px;
-        border-radius: 10px;
-        border: 2px dashed #ddd;
-        padding: 10px;
-    }
-    
-    .logo-preview-container {
-        position: relative;
-        display: inline-block;
-    }
-    
-    .remove-logo-btn {
-        position: absolute;
-        top: -10px;
-        right: -10px;
-        background: #dc3545;
-        color: white;
-        border: 2px solid white;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 16px;
-        transition: all 0.3s;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-    
-    .remove-logo-btn:hover {
-        background: #c82333;
-        transform: scale(1.1);
-    }
-</style>
 <?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
@@ -221,7 +112,6 @@
                         class="form-select" 
                         id="title_font" 
                         name="title_font"
-                        onchange="updateFontPreview(this.value)"
                     >
                         <optgroup label="Elegant & Sophisticated">
                             <option value="'Playfair Display', serif" <?= ($settings['title_font'] ?? '') === "'Playfair Display', serif" ? 'selected' : '' ?>>Playfair Display (Royal & Elegant)</option>
@@ -250,7 +140,7 @@
                     <!-- Font Preview -->
                     <div class="mt-2 p-3 bg-light rounded">
                         <p class="mb-1 small text-muted">Preview:</p>
-                        <h4 id="fontPreview" style="font-family: <?= esc($settings['title_font'] ?? 'Arial, sans-serif') ?>; margin: 0;"><?= esc($settings['system_name'] ?? 'PAGEANT TITLE') ?></h4>
+                        <h4 id="fontPreview" class="font-preview title-font"><?= esc($settings['system_name'] ?? 'PAGEANT TITLE') ?></h4>
                     </div>
                 </div>
                 
@@ -344,7 +234,7 @@
     
     <!-- Right Column: Live Preview -->
     <div class="col-lg-5">
-        <div class="settings-card position-sticky" style="top: 20px;">
+        <div class="settings-card position-sticky sticky-offset">
             <div class="settings-header">
                 <h5><i class="bi bi-eye-fill"></i> Live Preview</h5>
             </div>
@@ -383,6 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const accentColor = document.getElementById('accent_color');
     const textColor = document.getElementById('text_color');
     const buttonColor = document.getElementById('button_color');
+    const titleFontSelect = document.getElementById('title_font');
     
     // Get preview elements
     const previewBox = document.getElementById('previewBox');
@@ -436,6 +327,18 @@ document.addEventListener('DOMContentLoaded', function() {
     textColor.addEventListener('input', handleColorChange);
     if (buttonColor) buttonColor.addEventListener('input', handleColorChange);
     
+    function updateTitleFont(fontValue) {
+        const fontChoice = fontValue || 'Arial, sans-serif';
+        document.documentElement.style.setProperty('--title-font', fontChoice);
+    }
+
+    if (titleFontSelect) {
+        updateTitleFont(titleFontSelect.value);
+        titleFontSelect.addEventListener('change', function() {
+            updateTitleFont(this.value);
+        });
+    }
+
     // Initialize on page load
     updatePreview();
 });

@@ -2,122 +2,6 @@
 
 <?= $this->section('title') ?>Add New Round<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .segment-section {
-        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-        border-radius: 15px;
-        padding: 25px;
-        margin-bottom: 25px;
-        border: 2px solid #667eea;
-    }
-    
-    .segment-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 15px 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .criteria-row {
-        background: white;
-        border: 1px solid #e0e0e0;
-        border-radius: 10px;
-        padding: 15px;
-        margin-bottom: 15px;
-        position: relative;
-    }
-    
-    .criteria-row:hover {
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    
-    .remove-criteria-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-    }
-    
-    .add-criteria-btn {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 25px;
-        font-weight: 600;
-        transition: all 0.3s;
-    }
-    
-    .add-criteria-btn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(40,167,69,0.3);
-    }
-    
-    .percentage-badge {
-        display: inline-block;
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 0.9rem;
-    }
-    
-    .percentage-ok {
-        background: #28a745;
-        color: white;
-    }
-    
-    .percentage-warning {
-        background: #ffc107;
-        color: #000;
-    }
-    
-    .percentage-error {
-        background: #dc3545;
-        color: white;
-    }
-    
-    .segment-count-selector {
-        display: flex;
-        gap: 15px;
-    }
-    
-    .segment-option {
-        flex: 1;
-        padding: 20px;
-        border: 3px solid #e0e0e0;
-        border-radius: 15px;
-        cursor: pointer;
-        text-align: center;
-        transition: all 0.3s;
-        background: white;
-    }
-    
-    .segment-option:hover {
-        border-color: #667eea;
-        transform: translateY(-3px);
-        box-shadow: 0 4px 12px rgba(102,126,234,0.2);
-    }
-    
-    .segment-option.active {
-        border-color: #667eea;
-        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-    }
-    
-    .segment-option input[type="radio"] {
-        display: none;
-    }
-    
-    .segment-icon {
-        font-size: 48px;
-        margin-bottom: 10px;
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <!-- Page Header -->
@@ -232,7 +116,7 @@
                 <small class="text-muted">If enabled, only top-ranked contestants will advance to the next round.</small>
             </div>
 
-            <div id="elimination_quota_section" style="display: none;">
+            <div id="elimination_quota_section" class="d-none">
                 <label for="elimination_quota" class="form-label">
                     Number of Contestants to Advance (Top N) <span class="text-danger">*</span>
                 </label>
@@ -384,7 +268,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // Toggle elimination quota field
 document.getElementById('is_elimination').addEventListener('change', function() {
     const quotaSection = document.getElementById('elimination_quota_section');
-    quotaSection.style.display = this.checked ? 'block' : 'none';
+    quotaSection.classList.toggle('d-none', !this.checked);
     if (this.checked) {
         document.getElementById('elimination_quota').setAttribute('required', 'required');
     } else {

@@ -17,11 +17,11 @@ if ($userRole === 'judge') {
             <!-- ADMIN SIDEBAR -->
             <div class="sidebar-header text-center">
                 <?php if (system_logo()): ?>
-                    <img src="<?= system_logo() ?>" alt="Logo" style="height:48px; width:auto; border-radius:6px; margin-bottom:8px; background:#fff; padding:4px;">
+                    <img src="<?= system_logo() ?>" alt="Logo" class="sidebar-logo">
                 <?php else: ?>
-                    <div class="crown-icon" style="font-size:28px;">👑</div>
+                    <div class="crown-icon crown-icon-lg">👑</div>
                 <?php endif; ?>
-                <h4 style="margin:6px 0 0;"><?= esc(system_name()) ?></h4>
+                <h4 class="sidebar-title-text"><?= esc(system_name()) ?></h4>
                 <p>Welcome, System Administrator</p>
             </div>
             

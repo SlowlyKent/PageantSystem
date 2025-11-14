@@ -24,6 +24,7 @@ class ThemeController extends BaseController
         $accentColor  = $settingsModel->getSetting('accent_color') ?: '#764ba2';
         $textColor    = $settingsModel->getSetting('text_color') ?: '#333333';
         $buttonColor  = $settingsModel->getSetting('button_color') ?: $primaryColor;
+        $titleFont    = $settingsModel->getSetting('title_font') ?: 'Arial, sans-serif';
         
         // Calculate lighter and darker shades
         $primaryLight = $this->adjustBrightness($primaryColor, 20);
@@ -70,6 +71,7 @@ class ThemeController extends BaseController
     --theme-button-light: {$buttonLight};
     --theme-button-dark: {$buttonDark};
     --theme-button-contrast: {$buttonContrast};
+    --title-font: {$titleFont};
     --theme-gradient-135: linear-gradient(135deg, {$primaryColor} 0%, {$accentColor} 100%);
     --theme-gradient-90: linear-gradient(90deg, {$primaryColor} 0%, {$accentColor} 100%);
 }

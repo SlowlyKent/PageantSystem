@@ -28,7 +28,7 @@ if ($userRole === 'admin') {
         <!-- Logo/Brand -->
         <a class="navbar-brand" href="<?= $dashboardUrl ?>">
             <?php if (system_logo()): ?>
-                <img src="<?= system_logo() ?>" alt="Logo" style="height: 30px; margin-right: 8px;">
+                <img src="<?= system_logo() ?>" alt="Logo" class="navbar-brand-logo">
             <?php else: ?>
                 <i class="bi bi-trophy"></i>
             <?php endif; ?>

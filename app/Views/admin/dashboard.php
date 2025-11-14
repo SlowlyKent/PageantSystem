@@ -106,7 +106,7 @@
                     </div>
                 <?php else: ?>
                     <div class="text-center py-4">
-                        <i class="bi bi-inbox" style="font-size: 3rem; color: #d1d5db;"></i>
+                        <i class="bi bi-inbox empty-state-icon icon-display-lg"></i>
                         <p class="text-muted mt-3 mb-0">No active or completed round yet.</p>
                     </div>
                 <?php endif; ?>
@@ -125,8 +125,8 @@
                             <strong class="fs-5"><?= $judge_completion['completed'] ?>/<?= $judge_completion['total'] ?> Judges</strong>
                             <span class="badge bg-primary fs-6"><?= $judge_completion['percentage'] ?>%</span>
                         </div>
-                        <div class="progress" style="height: 10px; border-radius: 10px;">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: <?= $judge_completion['percentage'] ?>%;" aria-valuenow="<?= $judge_completion['percentage'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress progress-rounded">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" data-progress-width="<?= $judge_completion['percentage'] ?>" aria-valuenow="<?= $judge_completion['percentage'] ?>" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
                     
@@ -150,7 +150,7 @@
                         </div>
                     <?php else: ?>
                         <div class="text-center py-4">
-                            <i class="bi bi-info-circle" style="font-size: 3rem; color: #d1d5db;"></i>
+                            <i class="bi bi-info-circle empty-state-icon icon-display-lg"></i>
                             <p class="text-muted mt-3 mb-0">No judges assigned to this round yet.</p>
                         </div>
                     <?php endif; ?>
@@ -167,7 +167,7 @@
                     <?php endif; ?>
                 <?php else: ?>
                     <div class="text-center py-4">
-                        <i class="bi bi-inbox" style="font-size: 3rem; color: #d1d5db;"></i>
+                        <i class="bi bi-inbox empty-state-icon icon-display-lg"></i>
                         <p class="text-muted mt-3 mb-0">No active round.</p>
                     </div>
                 <?php endif; ?>

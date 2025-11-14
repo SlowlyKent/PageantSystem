@@ -2,49 +2,6 @@
 
 <?= $this->section('title') ?>Score Contestant<?= $this->endSection() ?>
 
-<?= $this->section('styles') ?>
-<style>
-    .segment-card {
-        border-radius: 15px;
-        overflow: hidden;
-        margin-bottom: 25px;
-    }
-    
-    .segment-header-1 {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px;
-    }
-    
-    .segment-header-2 {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        padding: 20px;
-    }
-    
-    .criteria-card {
-        background: white;
-        border: 2px solid #e0e0e0;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 15px;
-    }
-    
-    .score-input {
-        font-size: 1.5rem;
-        font-weight: bold;
-        text-align: center;
-    }
-    
-    .contestant-info {
-        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 25px;
-    }
-</style>
-<?= $this->endSection() ?>
-
 <?= $this->section('content') ?>
 
 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -62,13 +19,9 @@
     <div class="d-flex align-items-center">
         <?php if (!empty($contestant['profile_picture'])): ?>
             <img src="<?= base_url('uploads/contestants/' . $contestant['profile_picture']) ?>" 
-                 class="rounded-circle me-3" 
-                 width="80" 
-                 height="80"
-                 style="object-fit: cover;">
+                 class="rounded-circle me-3 contestant-avatar-sm">
         <?php else: ?>
-            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3" 
-                 style="width: 80px; height: 80px;">
+            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center me-3 contestant-avatar-placeholder">
                 <i class="bi bi-person fs-2 text-white"></i>
             </div>
         <?php endif; ?>
