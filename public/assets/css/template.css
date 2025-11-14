@@ -1544,7 +1544,7 @@ body.login-page {
     min-height: 100vh;
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden;
-    background: radial-gradient(circle at top left, #f7f1ff 0%, #fdf6ff 25%, #f2f6ff 55%, #edf5ff 100%);
+    background: linear-gradient(140deg, var(--theme-primary-color, #1c2541) 0%, var(--theme-accent-color, #5bc0be) 100%);
 }
 
 .login-wrapper {
@@ -1555,7 +1555,12 @@ body.login-page {
 
 .brand-side {
     position: relative;
-    background: linear-gradient(140deg, rgba(34, 44, 79, 0.95) 0%, rgba(87, 36, 128, 0.92) 60%, rgba(107, 67, 189, 0.9) 100%);
+    background: linear-gradient(
+        140deg,
+        color-mix(in srgb, var(--theme-primary-color, #1c2541) 85%, #000000 15%) 0%,
+        color-mix(in srgb, var(--theme-accent-color, #5bc0be) 75%, #000000 5%) 60%,
+        var(--theme-primary-color, #6b43bd) 100%
+    );
     padding: 80px 70px;
     display: flex;
     flex-direction: column;
@@ -1571,7 +1576,7 @@ body.login-page {
     width: 520px;
     height: 520px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%);
+    background: radial-gradient(circle, color-mix(in srgb, var(--theme-accent-color, #ffffff) 20%, #ffffff 80%) 0%, rgba(255,255,255,0) 70%);
     filter: blur(0);
     z-index: 0;
 }
@@ -1664,8 +1669,8 @@ body.login-page {
     text-align: left;
     padding: 18px 20px;
     border-radius: 20px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
     backdrop-filter: blur(8px);
     transition: all 0.35s ease;
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.15);
@@ -1735,7 +1740,7 @@ body.login-page {
 .login-icon {
     width: 80px;
     height: 80px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, var(--theme-primary-color, #1c2541), var(--theme-accent-color, #5bc0be));
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -1757,28 +1762,28 @@ body.login-page {
 .login-heading h2 {
     font-size: 2rem;
     font-weight: 700;
-    color: #1f1f2f;
+    color: var(--theme-primary-color, #1f1f2f);
     margin: 0;
     letter-spacing: 0.4px;
 }
 
 .login-subtitle {
     text-align: center;
-    color: #6c7080;
+    color: var(--theme-text-color, #6c7080);
     margin-bottom: 35px;
     font-size: 0.95rem;
 }
 
 .form-label {
     font-weight: 600;
-    color: #30354f;
+    color: var(--theme-primary-color, #30354f);
     margin-bottom: 8px;
     font-size: 0.9rem;
 }
 
 .form-control {
     background: rgba(238, 241, 255, 0.8);
-    border: 1px solid rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: 14px;
     padding: 14px 20px;
     font-size: 0.95rem;
@@ -1788,7 +1793,7 @@ body.login-page {
 
 .form-control:focus {
     background: rgba(238, 241, 255, 0.95);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
     outline: none;
     border-color: rgba(102, 126, 234, 0.35);
 }
@@ -1808,8 +1813,8 @@ body.login-page {
 }
 
 .form-check-input:checked {
-    background-color: #22c55e;
-    border-color: #22c55e;
+    background-color: var(--theme-accent-color, #22c55e);
+    border-color: var(--theme-accent-color, #22c55e);
 }
 
 .form-check-label {
@@ -1820,7 +1825,7 @@ body.login-page {
 
 .btn-signin {
     width: 100%;
-    background: linear-gradient(135deg, #fbd37d, #f3b645);
+    background: linear-gradient(135deg, var(--theme-button-color, #fbd37d), var(--theme-accent-color, #f3b645));
     border: none;
     color: #3b2f1f;
     padding: 14px;
@@ -1836,9 +1841,37 @@ body.login-page {
 }
 
 .btn-signin:hover {
-    background: linear-gradient(135deg, #f3b645, #e59b28);
+    background: linear-gradient(135deg, var(--theme-accent-color, #f3b645), var(--theme-button-color, #fbd37d));
     transform: translateY(-2px);
     box-shadow: 0 18px 35px rgba(227, 166, 70, 0.4);
+}
+
+body.login-page .brand-side,
+body.login-page .brand-heading h1,
+body.login-page .brand-tagline,
+body.login-page .feature-title,
+body.login-page .feature-desc {
+    color: var(--theme-text-color, #f7f9fc);
+}
+
+body.login-page .brand-heading .highlight,
+body.login-page .feature-icon i {
+    color: var(--theme-button-color, #e9b872);
+}
+
+body.login-page .feature-icon {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    display: inline-flex;
+    width: 48px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+}
+
+body.login-page .feature-card:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
 }
 
 .alert {

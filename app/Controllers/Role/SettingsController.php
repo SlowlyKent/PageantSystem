@@ -101,11 +101,11 @@ class SettingsController extends BaseController
     {
         // Get form data
         $themeData = [
-            'theme_preset'      => $this->request->getPost('theme_preset'),
-            'primary_color'     => $this->request->getPost('primary_color'),
-            'accent_color'      => $this->request->getPost('accent_color'),
-            'text_color'        => $this->request->getPost('text_color'),
-            'button_color'      => $this->request->getPost('button_color') ?: $this->request->getPost('primary_color'),
+            'theme_preset'   => $this->request->getPost('theme_preset'),
+            'primary_color'  => $this->request->getPost('primary_color'),
+            'accent_color'   => $this->request->getPost('accent_color'),
+            'text_color'     => $this->request->getPost('text_color'),
+            'button_color'   => $this->request->getPost('button_color') ?: $this->request->getPost('primary_color'),
         ];
 
         // Update all theme settings

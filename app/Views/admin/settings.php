@@ -11,6 +11,91 @@
 
 <?= $this->section('content') ?>
 
+<?php
+$themePresets = [
+    [
+        'id'      => 'golden_hour',
+        'label'   => 'Golden Hour',
+        'primary' => '#3A2B20',
+        'accent'  => '#F5C26B',
+        'text'    => '#FDF6EA',
+        'button'  => '#D4933F',
+    ],
+    [
+        'id'      => 'imperial_dusk',
+        'label'   => 'Imperial Dusk',
+        'primary' => '#1F2035',
+        'accent'  => '#E8B980',
+        'text'    => '#F9F6F1',
+        'button'  => '#DA9F5B',
+    ],
+    [
+        'id'      => 'champagne_noir',
+        'label'   => 'Champagne Noir',
+        'primary' => '#2B2C34',
+        'accent'  => '#F4D9B2',
+        'text'    => '#FEFAF3',
+        'button'  => '#D8B171',
+    ],
+    [
+        'id'      => 'sunrise_velvet',
+        'label'   => 'Sunrise Velvet',
+        'primary' => '#4B244A',
+        'accent'  => '#F6B756',
+        'text'    => '#FDEFE0',
+        'button'  => '#E89C42',
+    ],
+    [
+        'id'      => 'opulent_jade',
+        'label'   => 'Opulent Jade',
+        'primary' => '#123C3B',
+        'accent'  => '#E3B04B',
+        'text'    => '#F5F1E3',
+        'button'  => '#C38E2F',
+    ],
+    [
+        'id'      => 'royal_navy',
+        'label'   => 'Royal Navy & Gold',
+        'primary' => '#101E3C',
+        'accent'  => '#D4AF37',
+        'text'    => '#F8F4EA',
+        'button'  => '#C4932A',
+    ],
+    [
+        'id'      => 'desert_bloom',
+        'label'   => 'Desert Bloom',
+        'primary' => '#4F2F1B',
+        'accent'  => '#F0C27B',
+        'text'    => '#FFF7E8',
+        'button'  => '#D7A45C',
+    ],
+    [
+        'id'      => 'mocha_luxe',
+        'label'   => 'Mocha Luxe',
+        'primary' => '#2F2118',
+        'accent'  => '#E9B87C',
+        'text'    => '#F8F2EB',
+        'button'  => '#C98E51',
+    ],
+    [
+        'id'      => 'orchid_gold',
+        'label'   => 'Orchid Gold',
+        'primary' => '#4D1D3F',
+        'accent'  => '#F6C26B',
+        'text'    => '#FCEFEB',
+        'button'  => '#E0A356',
+    ],
+    [
+        'id'      => 'midnight_ember',
+        'label'   => 'Midnight Ember',
+        'primary' => '#1B1A2A',
+        'accent'  => '#F5B867',
+        'text'    => '#F6F3EC',
+        'button'  => '#D68F45',
+    ],
+];
+?>
+
 <!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2"><i class="bi bi-gear-fill"></i> System Settings</h1>
@@ -162,10 +247,30 @@
                 
                 <!-- Hidden field for selected preset -->
                 <input type="hidden" name="theme_preset" id="theme_preset" value="<?= esc($settings['theme_preset'] ?? 'custom') ?>">
+                <script>
+                    window.themePresets = <?= json_encode($themePresets) ?>;
+                </script>
                 
+                <!-- Theme Presets -->
+                <div class="mb-4">
+                    <label class="form-label d-flex align-items-center gap-2">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                        Theme Presets
+                    </label>
+                    <select class="form-select" id="themePresetSelect">
+                        <option value="custom">Custom (Current)</option>
+                        <?php foreach ($themePresets as $preset): ?>
+                            <option value="<?= esc($preset['id']) ?>" <?= ($settings['theme_preset'] ?? 'custom') === $preset['id'] ? 'selected' : '' ?>>
+                                <?= esc($preset['label']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <small class="text-muted">Choose a preset to instantly update the entire app.</small>
+                </div>
+
                 <!-- Color Pickers -->
                 <div class="mb-4">
-                    <label class="form-label"><i class="bi bi-droplet-fill"></i> Theme Colors</label>
+                    <label class="form-label"><i class="bi bi-droplet-fill"></i> Admin Theme Colors</label>
                     
                     <!-- Primary Color -->
                     <div class="color-picker-group">
@@ -236,14 +341,14 @@
     <div class="col-lg-5">
         <div class="settings-card position-sticky sticky-offset">
             <div class="settings-header">
-                <h5><i class="bi bi-eye-fill"></i> Live Preview</h5>
+                <h5><i class="bi bi-eye-fill"></i> Login Preview</h5>
             </div>
             
             <!-- Preview Box (changes colors in real-time) -->
             <div class="theme-preview-box" id="previewBox">
                 <h3 id="previewText">Preview Theme</h3>
                 <button class="preview-button" id="previewBtn">Sample Button</button>
-                <p id="previewDescription">This is how your theme will look</p>
+                <p id="previewDescription">This is how the login page will look</p>
             </div>
             
             <div class="mt-3 p-3 bg-light rounded">
@@ -281,11 +386,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewText = document.getElementById('previewText');
     const previewDescription = document.getElementById('previewDescription');
     const presetField = document.getElementById('theme_preset');
+    const presetSelect = document.getElementById('themePresetSelect');
+    const presetData = Array.isArray(window.themePresets) ? window.themePresets : [];
     
-    if (presetField && presetField.value !== 'custom') {
-        presetField.value = 'custom';
-    }
-
     /**
      * Update preview colors
      * This function applies the selected colors to the preview box
@@ -294,7 +397,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const primary = primaryColor.value;
         const accent = accentColor.value;
         const text = textColor.value;
-        const button = (buttonColor?.value || primary);
+        const button = buttonColor?.value || primary;
 
         // Gradient preview background based on colors
         previewBox.style.background = `linear-gradient(135deg, ${primary} 0%, ${accent} 100%)`;
@@ -319,13 +422,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (presetField) {
             presetField.value = 'custom';
         }
+        if (presetSelect) {
+            presetSelect.value = 'custom';
+        }
         updatePreview();
     }
 
-    primaryColor.addEventListener('input', handleColorChange);
-    accentColor.addEventListener('input', handleColorChange);
-    textColor.addEventListener('input', handleColorChange);
-    if (buttonColor) buttonColor.addEventListener('input', handleColorChange);
+    [primaryColor, accentColor, textColor, buttonColor].forEach(function(input) {
+        if (input) {
+            input.addEventListener('input', handleColorChange);
+        }
+    });
     
     function updateTitleFont(fontValue) {
         const fontChoice = fontValue || 'Arial, sans-serif';
@@ -337,6 +444,48 @@ document.addEventListener('DOMContentLoaded', function() {
         titleFontSelect.addEventListener('change', function() {
             updateTitleFont(this.value);
         });
+    }
+
+    function applyPreset(id) {
+        if (!id || id === 'custom') {
+            presetField.value = 'custom';
+            if (presetSelect) {
+                presetSelect.value = 'custom';
+            }
+            updatePreview();
+            return;
+        }
+        const preset = presetData.find(p => p.id === id);
+        if (!preset) {
+            return;
+        }
+
+        primaryColor.value = preset.primary;
+        accentColor.value = preset.accent;
+        textColor.value = preset.text;
+        if (buttonColor) {
+            buttonColor.value = preset.button;
+        }
+        presetField.value = preset.id;
+        if (presetSelect) {
+            presetSelect.value = preset.id;
+        }
+        updatePreview();
+    }
+
+    if (presetSelect) {
+        presetSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                presetField.value = 'custom';
+                updatePreview();
+            } else {
+                applyPreset(this.value);
+            }
+        });
+
+        if (presetField) {
+            presetSelect.value = presetField.value || 'custom';
+        }
     }
 
     // Initialize on page load
